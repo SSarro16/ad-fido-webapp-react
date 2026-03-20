@@ -33,6 +33,7 @@ import type {
   ManagedListing,
   ManagedListingInput,
 } from '../types/subscriber';
+import { DogLoadingScreen } from '../ui/DogLoadingScreen';
 import { LocationAutocompleteInput } from '../ui/LocationAutocompleteInput';
 import { SectionTitle } from '../ui/SectionTitle';
 
@@ -637,7 +638,7 @@ function ListingComposerCard({
 export function ProfessionalDashboardPage() {
   const session = useAuthStore((state) => state.session);
   const token = session?.token;
-  const { data: listings = [] } = useManagedListings(token);
+  const { data: listings = [], isLoading: isListingsLoading } = useManagedListings(token);
   const createListing = useCreateManagedListing(token);
   const updateListing = useUpdateManagedListing(token);
   const updateStatus = useUpdateManagedListingStatus(token);
@@ -653,6 +654,7 @@ export function ProfessionalDashboardPage() {
     updateListing.isPending ||
     updateStatus.isPending ||
     deleteListing.isPending;
+  const showDashboardLoader = isListingsLoading || isBusy;
   const breederSlotsUsed = listings.length;
   const breederSlotsLeft = Math.max(0, breederListingLimit - breederSlotsUsed);
   const breederLimitReached = isBreeder && breederSlotsUsed >= breederListingLimit;
@@ -878,6 +880,24 @@ export function ProfessionalDashboardPage() {
   return (
     <section className="section section--page">
       <div className="container">
+        {showDashboardLoader ? (
+          <div className="seller-dashboard-loader">
+            <DogLoadingScreen
+              title={
+                isListingsLoading
+                  ? 'Stiamo radunando le tue schede'
+                  : 'Stiamo aggiornando il tuo spazio operativo'
+              }
+              description={
+                isListingsLoading
+                  ? 'Recuperiamo annunci, stato revisione e materiali del tuo profilo.'
+                  : 'Salvataggi, revisioni e modifiche stanno arrivando a destinazione.'
+              }
+              variant="page"
+            />
+          </div>
+        ) : null}
+
         <SectionTitle
           eyebrow={dashboardCopy.eyebrow}
           title={`${dashboardCopy.titlePrefix}: ${session?.user.organizationName ?? session?.user.name ?? ''}`.replace(
@@ -968,7 +988,9 @@ export function ProfessionalDashboardPage() {
           </div>
         )}
 
-        <div className="seller-dashboard-shell">
+        <div
+          className={`seller-dashboard-shell${showDashboardLoader ? ' seller-dashboard-shell--muted' : ''}`}
+        >
           <aside className="panel seller-dashboard-sidebar">
             <div className="seller-dashboard-sidebar__header">
               <div>

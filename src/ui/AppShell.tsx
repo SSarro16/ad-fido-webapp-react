@@ -10,16 +10,22 @@ import {
   Search,
   UserCircle2,
 } from 'lucide-react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useNavigation } from 'react-router-dom';
 
 import { useAuthStore } from '../features/auth/auth.store';
 import { useToast } from '../features/toasts/useToast';
+import { DogLoadingScreen } from './DogLoadingScreen';
 
 export function AppShell() {
   const navigate = useNavigate();
+  const navigationState = useNavigation();
   const session = useAuthStore((state) => state.session);
+  const authStatus = useAuthStore((state) => state.status);
+  const initialized = useAuthStore((state) => state.initialized);
   const logout = useAuthStore((state) => state.logout);
   const { showToast } = useToast();
+  const showGlobalLoader =
+    navigationState.state !== 'idle' || !initialized || authStatus === 'loading';
   const canManageListings =
     session?.user.role === 'breeder' ||
     session?.user.role === 'shelter' ||
@@ -45,6 +51,24 @@ export function AppShell() {
 
   return (
     <div className="app-shell">
+      {showGlobalLoader ? (
+        <div className="app-shell__loader">
+          <DogLoadingScreen
+            title={
+              !initialized || authStatus === 'loading'
+                ? 'Stiamo riallineando il tuo profilo'
+                : 'Stiamo accompagnandoti alla prossima pagina'
+            }
+            description={
+              !initialized || authStatus === 'loading'
+                ? 'Controlliamo sessione, permessi e dati essenziali prima di mostrarti tutto.'
+                : 'Un attimo e trovi la prossima tappa, con annunci e contenuti gia pronti.'
+            }
+            variant="overlay"
+          />
+        </div>
+      ) : null}
+
       <header className="topbar">
         <div className="container topbar__inner">
           <NavLink to="/" className="brand">

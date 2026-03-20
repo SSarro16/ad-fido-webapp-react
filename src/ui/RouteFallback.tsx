@@ -1,12 +1,14 @@
+import { DogLoadingScreen } from './DogLoadingScreen';
+
 export function RouteFallback() {
   return (
     <section className="section section--page">
       <div className="container">
-        <div className="panel route-fallback">
-          <div className="route-fallback__pulse" />
-          <strong>Caricamento pagina...</strong>
-          <p>Stiamo preparando i contenuti richiesti.</p>
-        </div>
+        <DogLoadingScreen
+          title="Stiamo aprendo la prossima pagina"
+          description="Le zampette stanno sistemando contenuti, immagini e navigazione."
+          variant="page"
+        />
       </div>
     </section>
   );

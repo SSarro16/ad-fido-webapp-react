@@ -63,7 +63,15 @@ img {
 }
 
 .app-shell {
+  position: relative;
   overflow-x: clip;
+}
+
+.app-shell__loader {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
 }
 
 .app-shell__body {
@@ -654,6 +662,173 @@ img {
   justify-content: center;
 }
 
+.dog-loader,
+.dog-loader__card,
+.dog-loader__copy,
+.dog-loader__trail {
+  display: grid;
+}
+
+.dog-loader {
+  position: relative;
+  place-items: center;
+  min-height: 20rem;
+  padding: 1rem 0;
+  isolation: isolate;
+}
+
+.dog-loader--overlay {
+  min-height: 100dvh;
+  padding: 2rem;
+}
+
+.dog-loader__backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dog-loader__orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(10px);
+  opacity: 0.85;
+}
+
+.dog-loader__orb--warm {
+  top: 8%;
+  left: 12%;
+  width: 12rem;
+  height: 12rem;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.28), rgba(255, 107, 53, 0));
+  animation: dogLoaderFloat 5.8s ease-in-out infinite;
+}
+
+.dog-loader__orb--cool {
+  right: 10%;
+  bottom: 10%;
+  width: 14rem;
+  height: 14rem;
+  background: radial-gradient(circle, rgba(15, 61, 94, 0.18), rgba(15, 61, 94, 0));
+  animation: dogLoaderFloat 6.6s ease-in-out infinite reverse;
+}
+
+.dog-loader__card {
+  position: relative;
+  gap: 1rem;
+  justify-items: center;
+  width: min(32rem, 100%);
+  padding: 1.6rem 1.4rem;
+  border-radius: 1.9rem;
+  border: 1px solid rgba(15, 61, 94, 0.1);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 240, 0.9)),
+    radial-gradient(circle at top right, rgba(255, 107, 53, 0.14), transparent 16rem);
+  box-shadow: 0 28px 70px rgba(15, 61, 94, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+.dog-loader--overlay .dog-loader__card {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 240, 0.92)),
+    radial-gradient(circle at top right, rgba(255, 107, 53, 0.16), transparent 18rem);
+  box-shadow: 0 32px 90px rgba(15, 61, 94, 0.18);
+}
+
+.dog-loader__badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  border-radius: 1.4rem;
+  background: linear-gradient(135deg, var(--secondary), #2d6b8e);
+  color: #fff;
+}
+
+.dog-loader__badge-ring {
+  position: absolute;
+  inset: -0.45rem;
+  border: 1px dashed rgba(255, 107, 53, 0.4);
+  border-radius: 1.7rem;
+  animation: spin 6.2s linear infinite;
+}
+
+.dog-loader__copy {
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.dog-loader__copy strong {
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+}
+
+.dog-loader__copy p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.dog-loader__trail {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  width: min(16rem, 100%);
+}
+
+.dog-loader__trail-step {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: rgba(15, 61, 94, 0.06);
+  color: var(--secondary);
+  opacity: 0.28;
+  transform: translateY(0) scale(0.92);
+  animation: pawPulse 1.5s ease-in-out infinite;
+}
+
+.dog-loader__trail-step--two {
+  animation-delay: 0.18s;
+}
+
+.dog-loader__trail-step--three {
+  animation-delay: 0.36s;
+}
+
+.dog-loader__trail-step--four {
+  animation-delay: 0.54s;
+}
+
+.dog-loader__meter {
+  width: min(15rem, 100%);
+  height: 0.65rem;
+  padding: 0.08rem;
+  border-radius: 999px;
+  background: rgba(15, 61, 94, 0.08);
+  overflow: hidden;
+}
+
+.dog-loader__meter span {
+  display: block;
+  height: 100%;
+  width: 44%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), #ff9b73);
+  animation: dogLoaderBar 1.2s ease-in-out infinite alternate;
+}
+
+.seller-dashboard-loader {
+  margin-bottom: 1.25rem;
+}
+
+.seller-dashboard-shell--muted {
+  opacity: 0.5;
+  filter: saturate(0.86);
+  pointer-events: none;
+}
+
 .location-input__spinner {
   position: absolute;
   top: 50%;
@@ -696,6 +871,37 @@ img {
 .location-input__option span {
   color: var(--text-soft);
   font-weight: 500;
+}
+
+@keyframes pawPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0.35rem) scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-0.25rem) scale(1.04);
+  }
+}
+
+@keyframes dogLoaderBar {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(125%);
+  }
+}
+
+@keyframes dogLoaderFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -0.8rem, 0) scale(1.05);
+  }
 }
 
 .search-card label,
