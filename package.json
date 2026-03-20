@@ -8,6 +8,7 @@
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:web\"",
     "dev:web": "vite",
     "dev:server": "node server/index.js",
+    "seed:demo-auth": "node server/scripts/seed-demo-auth.js",
     "build": "tsc -b && vite build",
     "start:render": "node server/index.js",
     "preview": "vite preview",

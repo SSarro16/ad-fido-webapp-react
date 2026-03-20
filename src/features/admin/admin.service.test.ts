@@ -88,6 +88,10 @@ describe('admin.service', () => {
               ],
             },
             credentials: {
+              user: {
+                email: 'user@adfido.it',
+                password: 'AdFidoUser2026!',
+              },
               admin: {
                 email: 'adfidoadministration@adfido.it',
                 password: 'AdFidoAdmin2026!',

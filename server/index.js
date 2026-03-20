@@ -879,6 +879,10 @@ app.get('/api/admin/overview', async (request, response) => {
   response.json({
     overview: calculateAdminOverview(users, listings),
     credentials: {
+      user: {
+        email: 'user@adfido.it',
+        password: 'AdFidoUser2026!',
+      },
       admin: {
         email: 'adfidoadministration@adfido.it',
         password: 'AdFidoAdmin2026!',

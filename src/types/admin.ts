@@ -44,6 +44,7 @@ export type AdminOverviewPayload = {
     count: number;
   }>;
   credentials: {
+    user: DemoCredential;
     admin: DemoCredential;
     breeder: DemoCredential;
     shelter: DemoCredential;
