@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: adfido-webapp
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: AUTH_JWT_SECRET
+        generateValue: true
+      - key: DATA_DIR
+        value: /var/data/adfido/data
+      - key: UPLOADS_DIR
+        value: /var/data/adfido/uploads
+      - key: VITE_ENABLE_DEMO_AUTH
+        value: "true"
+    disk:
+      name: adfido-storage
+      mountPath: /var/data/adfido
+      sizeGB: 1
