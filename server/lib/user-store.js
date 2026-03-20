@@ -11,6 +11,7 @@ const usersFilePath = path.join(dataDir, 'users.json');
 const seededUsers = [
   {
     id: 'user-seed',
+    firebaseUid: undefined,
     name: 'Utente Demo',
     email: 'user@adfido.it',
     phone: '+39 333 410 2201',
@@ -22,6 +23,7 @@ const seededUsers = [
   },
   {
     id: 'breeder-seed',
+    firebaseUid: undefined,
     name: 'Allevatore Privato Demo',
     email: 'breeder.demo@adfido.it',
     phone: '+39 333 410 2202',
@@ -33,6 +35,7 @@ const seededUsers = [
   },
   {
     id: 'shelter-seed',
+    firebaseUid: undefined,
     name: 'Canile Sanitario di San Giorgio Jonico',
     email: 'shelter.demo@adfido.it',
     phone: '+39 333 410 2204',
@@ -44,6 +47,7 @@ const seededUsers = [
   },
   {
     id: 'admin-seed',
+    firebaseUid: undefined,
     name: 'CEO AdFido',
     email: 'adfidoadministration@adfido.it',
     phone: '+39 333 410 2203',
@@ -61,7 +65,15 @@ function normalizeUser(user) {
   if (canonicalSeed) {
     return {
       ...canonicalSeed,
+      ...user,
+      firebaseUid: user.firebaseUid ?? canonicalSeed.firebaseUid,
       createdAt: user.createdAt ?? canonicalSeed.createdAt,
+      phone: user.phone ?? canonicalSeed.phone,
+      organizationName:
+        canonicalSeed.role === 'admin'
+          ? undefined
+          : (user.organizationName ?? canonicalSeed.organizationName ?? ''),
+      emailVerified: user.emailVerified ?? canonicalSeed.emailVerified,
     };
   }
 
@@ -74,6 +86,7 @@ function normalizeUser(user) {
 
   return {
     ...user,
+    firebaseUid: user.firebaseUid ?? undefined,
     role: normalizedRole,
     organizationName:
       normalizedRole === 'admin'

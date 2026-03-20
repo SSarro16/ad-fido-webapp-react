@@ -1,7 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { getCurrentSession, login, register, updateProfile } from './auth.service';
+import {
+  getCurrentSession,
+  login,
+  logoutFromFirebase,
+  register,
+  updateProfile,
+} from './auth.service';
 import type { AuthSession, LoginInput, RegisterInput } from '../../types/auth';
 
 type AuthStatus = 'idle' | 'loading' | 'authenticated';
@@ -79,7 +85,10 @@ export const useAuthStore = create<AuthState>()(
           set({ session: null, status: 'idle', initialized: true });
         }
       },
-      logout: () => set({ session: null, status: 'idle', initialized: true }),
+      logout: () => {
+        void logoutFromFirebase();
+        set({ session: null, status: 'idle', initialized: true });
+      },
     }),
     {
       name: 'adfido-auth',

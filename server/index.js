@@ -8,11 +8,8 @@ import { fileURLToPath } from 'node:url';
 import multer from 'multer';
 
 import {
-  comparePassword,
-  hashPassword,
   readBearerToken,
   sanitizeUser,
-  signAuthToken,
   verifyAuthToken,
 } from './lib/auth.js';
 import { createStarterListing } from './lib/listing-templates.js';
@@ -183,15 +180,55 @@ async function getAuthenticatedUser(request) {
   }
 
   try {
-    const payload = verifyAuthToken(token);
+    const payload = await verifyAuthToken(token);
     const users = await readUsers();
-    const user = users.find((item) => item.id === payload.sub);
+    let user = users.find((item) => item.firebaseUid === payload.uid);
+
+    if (!user && payload.email) {
+      const matchedByEmail = users.find((item) => item.email === payload.email);
+
+      if (matchedByEmail) {
+        user = {
+          ...matchedByEmail,
+          firebaseUid: payload.uid,
+          emailVerified: payload.email_verified ?? matchedByEmail.emailVerified,
+        };
+
+        await writeUsers(
+          users.map((item) => (item.id === matchedByEmail.id ? user : item))
+        );
+      }
+    }
+
+    if (!user && payload.email) {
+      user = {
+        id: `firebase-${payload.uid}`,
+        firebaseUid: payload.uid,
+        name: payload.name?.trim() || payload.email.split('@')[0] || 'Utente AdFido',
+        email: payload.email,
+        phone: '',
+        role: 'user',
+        emailVerified: payload.email_verified ?? false,
+        organizationName: '',
+        createdAt: new Date().toISOString(),
+      };
+
+      await writeUsers([...users, user]);
+    }
 
     if (!user) {
       return { error: 'Sessione non valida.' };
     }
 
-    return { user, token };
+    return {
+      user: {
+        ...user,
+        firebaseUid: payload.uid,
+        emailVerified: payload.email_verified ?? user.emailVerified,
+      },
+      token,
+      decodedToken: payload,
+    };
   } catch {
     return { error: 'Token non valido o scaduto.' };
   }
@@ -482,78 +519,14 @@ app.get('/api/maps/autocomplete', async (request, response) => {
 });
 
 app.post('/api/auth/register', async (request, response) => {
-  const name = String(request.body?.name ?? '').trim();
-  const email = String(request.body?.email ?? '')
-    .trim()
-    .toLowerCase();
-  const phone = String(request.body?.phone ?? '').trim();
-  const password = String(request.body?.password ?? '');
-  const role = request.body?.role;
-
-  if (!name || !email || !phone || password.length < 6 || role !== 'user') {
-    response.status(400).json({ message: 'Dati registrazione non validi.' });
-    return;
-  }
-
-  const users = await readUsers();
-  const existingUser = users.find((user) => user.email === email);
-
-  if (existingUser) {
-    response.status(409).json({ message: 'Esiste gia un account con questa email.' });
-    return;
-  }
-
-  const passwordHash = await hashPassword(password);
-  const newUser = {
-    id: randomUUID(),
-    name,
-    email,
-    phone,
-    role: 'user',
-    emailVerified: false,
-    organizationName: '',
-    createdAt: new Date().toISOString(),
-    passwordHash,
-  };
-
-  users.push(newUser);
-  await writeUsers(users);
-
-  response.status(201).json({
-    user: sanitizeUser(newUser),
-    token: signAuthToken(newUser),
+  response.status(410).json({
+    message: 'La registrazione diretta via backend e stata dismessa. Usa Firebase Auth dal frontend.',
   });
 });
 
 app.post('/api/auth/login', async (request, response) => {
-  const email = String(request.body?.email ?? '')
-    .trim()
-    .toLowerCase();
-  const password = String(request.body?.password ?? '');
-
-  if (!email || !password) {
-    response.status(400).json({ message: 'Email e password sono obbligatorie.' });
-    return;
-  }
-
-  const users = await readUsers();
-  const matchedUser = users.find((user) => user.email === email);
-
-  if (!matchedUser) {
-    response.status(401).json({ message: 'Credenziali non valide.' });
-    return;
-  }
-
-  const passwordMatches = await comparePassword(password, matchedUser.passwordHash);
-
-  if (!passwordMatches) {
-    response.status(401).json({ message: 'Credenziali non valide.' });
-    return;
-  }
-
-  response.json({
-    user: sanitizeUser(matchedUser),
-    token: signAuthToken(matchedUser),
+  response.status(410).json({
+    message: 'Il login diretto via backend e stato dismesso. Usa Firebase Auth dal frontend.',
   });
 });
 

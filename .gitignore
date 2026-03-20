@@ -17,6 +17,8 @@ yarn-error.*
 # local env files
 .env
 .env*.local
+*-firebase-adminsdk-*.json
+firebase-adminsdk-*.json
 
 # macOS
 .DS_Store
@@ -29,3 +31,7 @@ yarn-error.*
 /version-control/
 /AdFido - Design & Funzionalità 315676a6bfc5805893caebb530ee9709.md
 /AdFido - Design & Funzionalit*.md
+
+/project_plan.md
+/IMPLEMENTATION_BACKLOG.md
+/IMPLEMENTATION_SESSION_*.md

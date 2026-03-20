@@ -7,6 +7,7 @@ vi.mock('./auth.service', () => ({
   register: vi.fn(),
   getCurrentSession: vi.fn(),
   updateProfile: vi.fn(),
+  logoutFromFirebase: vi.fn(),
 }));
 
 const mockedLogin = vi.mocked(authService.login);

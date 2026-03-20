@@ -16,7 +16,7 @@ services:
       - key: UPLOADS_DIR
         value: /var/data/adfido/uploads
       - key: VITE_ENABLE_DEMO_AUTH
-        value: "true"
+        value: "false"
     disk:
       name: adfido-storage
       mountPath: /var/data/adfido

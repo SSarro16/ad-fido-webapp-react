@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import { useAuthStore } from '../features/auth/auth.store';
 import { useToast } from '../features/toasts/useToast';
+import { env } from '../services/env';
 
 const schema = z.object({
   email: z.string().email(),
@@ -139,31 +140,33 @@ export function AccessPage() {
           </div>
         </form>
 
-        <div className="panel auth-guidance auth-guidance--demo">
-          <div className="auth-guidance__header">
-            <strong>Accessi demo rapidi</strong>
-            <p>
-              Seleziona uno dei 4 profili per compilare automaticamente le credenziali corrette.
-            </p>
+        {env.enableDemoAuth ? (
+          <div className="panel auth-guidance auth-guidance--demo">
+            <div className="auth-guidance__header">
+              <strong>Accessi demo rapidi</strong>
+              <p>
+                Seleziona uno dei 4 profili per compilare automaticamente le credenziali corrette.
+              </p>
+            </div>
+            <div className="auth-card-grid auth-card-grid--demo">
+              {demos.map(({ title, description, email, password }) => (
+                <button
+                  key={email}
+                  type="button"
+                  className="panel auth-demo-card"
+                  onClick={() => {
+                    setValue('email', email);
+                    setValue('password', password);
+                  }}
+                >
+                  <strong>{title}</strong>
+                  <span>{description}</span>
+                  <p>{email}</p>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="auth-card-grid auth-card-grid--demo">
-            {demos.map(({ title, description, email, password }) => (
-              <button
-                key={email}
-                type="button"
-                className="panel auth-demo-card"
-                onClick={() => {
-                  setValue('email', email);
-                  setValue('password', password);
-                }}
-              >
-                <strong>{title}</strong>
-                <span>{description}</span>
-                <p>{email}</p>
-              </button>
-            ))}
-          </div>
-        </div>
+        ) : null}
       </div>
     </section>
   );

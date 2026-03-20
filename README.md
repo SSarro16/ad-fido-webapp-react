@@ -41,6 +41,9 @@ Create `.env` from `.env.example`.
 - `VITE_API_BASE_URL` points the frontend to the backend
 - `AUTH_JWT_SECRET` signs the login session tokens on the backend
 - `VITE_ENABLE_DEMO_AUTH=true` only for internal testing
+- `VITE_FIREBASE_*` configures the Firebase Web SDK in the frontend
+- `FIREBASE_SERVICE_ACCOUNT_PATH` or `FIREBASE_SERVICE_ACCOUNT_JSON` configures Firebase Admin on the backend
+- `FIREBASE_PROJECT_ID` and `FIREBASE_STORAGE_BUCKET` help the backend target the correct Firebase project
 
 ## Deploy On Render
 
@@ -63,6 +66,16 @@ Recommended setup:
    - `DATA_DIR=/var/data/adfido/data`
    - `UPLOADS_DIR=/var/data/adfido/uploads`
 5. Add `GOOGLE_MAPS_API_KEY` in Render only if you want live Google Places autocomplete.
+6. Add Firebase env variables before switching auth/data/uploads away from local file storage:
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_STORAGE_BUCKET`
+   - `FIREBASE_SERVICE_ACCOUNT_JSON`
 6. After the first deploy, open the Render URL and verify:
    - homepage loads
    - `GET /api/health` returns `ok: true`
@@ -73,6 +86,7 @@ Important Render note:
 - Render filesystems are ephemeral unless you use a disk
 - uploaded images and JSON-backed demo data will be lost on redeploy without the configured disk
 - `AUTH_JWT_SECRET` is generated automatically by `render.yaml`, but you can replace it with your own secret in the Render dashboard
+- do not commit Firebase service account JSON files; keep them local or inject them through Render secrets
 
 ## Demo access
 
