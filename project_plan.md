@@ -530,8 +530,8 @@ Nota operativa:
 
 - branch di riferimento locale: `main`;
 - repository GitHub pubblicato: `https://github.com/SSarro16/ad-fido-webapp-react`;
-- ultimo commit locale dopo l'estensione della history: `340a3b7` (`docs: capture roadmap and repository release status`);
-- baseline funzionale del rewrite presente in history: `8d0bd97`, `5e27b54`, `ef68e6e`, `09520bf`, `e3bd68f`, `a9b17c2`, `1eb35ec`, `1ab22e0`, `7fdc3eb`;
+- ultimo commit locale dopo l'estensione della history con merge branch: `6ccb854` (`merge: integrate deployment and documentation branch`);
+- baseline funzionale del rewrite presente in history: `090d39c`, `bbabba0`, `284a2f8`, `3c503fe`, `927db08`, `3b5d521`, `87d1e04`, `43d95ef`, `32eaff3`, `3aaa690`, `5ce52da`, `9d64cf1`, `cfd1967`, `768f074`, `218754c`, `6fe6c70`, `ed6c6cd`, `8901e56`;
 - tag baseline attuale pubblicato: `v0.1.0`;
 - quality gates verificate su questa baseline: `npm run lint`, `npm run test:run`, `npm run build`;
 - workflow desiderato: feature branching con commit Conventional Commits e merge verso `main` tramite Pull Request;
@@ -542,6 +542,7 @@ Stato operativo completato:
 - remote `origin` configurato verso GitHub;
 - branch `main` pubblicato e tracciato su `origin/main`;
 - tag `v0.1.0` pubblicato su GitHub;
+- history Git ampliata con feature branch dedicate e merge commit espliciti verso `main`;
 - repository pronto per essere collegato a Render come source of truth.
 
 Obiettivo finale di questa traccia:
