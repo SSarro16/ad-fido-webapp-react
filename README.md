@@ -1,46 +1,99 @@
-# Getting Started with Create React App
+# AdFido Webapp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React web application foundation for the AdFido marketplace.
 
-## Available Scripts
+## Scripts
 
-In the project directory, you can run:
+- `npm start`: alias di `npm run dev` per avviare frontend e backend insieme
+- `npm run dev`: avvia frontend Vite e backend Node in parallelo
+- `npm run dev:web`: avvia solo il client Vite
+- `npm run dev:server`: avvia solo il backend Express file-based
+- `npm run build`: esegue `tsc -b` e la build di produzione Vite
+- `npm run typecheck`: esegue il typecheck TypeScript senza emissione
+- `npm run lint`: esegue ESLint su tutto il progetto
+- `npm run test`: avvia Vitest in watch mode
+- `npm run test:run`: esegue Vitest in modalita run
+- `npm run format`: formatta il repo con Prettier
+- `npm run format:check`: verifica che il formatting sia coerente con Prettier
 
-### `npm start`
+## Workflow Qualita
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Il workflow di validazione del progetto e allineato agli script locali e alla Definition of Done dichiarata in `PROJECT_PLAN.md`.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Controlli previsti in CI:
 
-### `npm test`
+- `npm run typecheck`
+- `npm run lint`
+- `npm run test:run`
+- `npm run build`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Standard di repository:
 
-### `npm run build`
+- `.editorconfig` per indentazione, newline finale e line ending coerenti
+- `Prettier` per uniformare formatting e spacing su codice, CSS, JSON e documentazione
+- `ESLint` come guardrail principale per il codice frontend e backend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Environment
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Create `.env` from `.env.example`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `GOOGLE_MAPS_API_KEY` stays on the backend only
+- `VITE_API_BASE_URL` points the frontend to the backend
+- `AUTH_JWT_SECRET` signs the login session tokens on the backend
+- `VITE_ENABLE_DEMO_AUTH=true` only for internal testing
 
-### `npm run eject`
+## Deploy On Render
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+This repo is now set up to deploy on Render as a single Node web service:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Render builds the Vite frontend with `npm ci && npm run build`
+- Render starts the Express server with `npm run start:render`
+- the server serves both `/api/*` and the built SPA from `dist/`
+- frontend production API calls default to same-origin `/api`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Recommended setup:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. Push this repository to GitHub.
+2. In Render, create a new `Blueprint` service from the repo so Render reads [`render.yaml`](./render.yaml).
+3. Confirm the generated web service uses:
+   - build command: `npm ci && npm run build`
+   - start command: `npm run start:render`
+   - health check path: `/api/health`
+4. Keep the persistent disk enabled. It is used for:
+   - `DATA_DIR=/var/data/adfido/data`
+   - `UPLOADS_DIR=/var/data/adfido/uploads`
+5. Add `GOOGLE_MAPS_API_KEY` in Render only if you want live Google Places autocomplete.
+6. After the first deploy, open the Render URL and verify:
+   - homepage loads
+   - `GET /api/health` returns `ok: true`
+   - login works with the demo credentials below
 
-## Learn More
+Important Render note:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Render filesystems are ephemeral unless you use a disk
+- uploaded images and JSON-backed demo data will be lost on redeploy without the configured disk
+- `AUTH_JWT_SECRET` is generated automatically by `render.yaml`, but you can replace it with your own secret in the Render dashboard
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Demo access
+
+- `user@adfido.it`
+- `breeder.demo@adfido.it`
+- `shelter.demo@adfido.it`
+- `adfidoadministration@adfido.it`
+
+Demo passwords:
+
+- user: `AdFidoUser2026!`
+- admin: `AdFidoAdmin2026!`
+- breeder: `AdFidoBreeder2026!`
+- shelter: `AdFidoShelter2026!`
+
+## Auth backend
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+
+Users are stored in `server/data/users.json`, created automatically on first run.
+
+When `DATA_DIR` is set, the backend stores user and listing JSON files there instead.
