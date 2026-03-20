@@ -7,7 +7,7 @@ React web application foundation for the AdFido marketplace.
 - `npm start`: alias di `npm run dev` per avviare frontend e backend insieme
 - `npm run dev`: avvia frontend Vite e backend Node in parallelo
 - `npm run dev:web`: avvia solo il client Vite
-- `npm run dev:server`: avvia solo il backend Express file-based
+- `npm run dev:server`: avvia solo il backend Express con Firebase Admin
 - `npm run build`: esegue `tsc -b` e la build di produzione Vite
 - `npm run typecheck`: esegue il typecheck TypeScript senza emissione
 - `npm run lint`: esegue ESLint su tutto il progetto
@@ -62,11 +62,8 @@ Recommended setup:
    - build command: `npm ci && npm run build`
    - start command: `npm run start:render`
    - health check path: `/api/health`
-4. Keep the persistent disk enabled. It is used for:
-   - `DATA_DIR=/var/data/adfido/data`
-   - `UPLOADS_DIR=/var/data/adfido/uploads`
-5. Add `GOOGLE_MAPS_API_KEY` in Render only if you want live Google Places autocomplete.
-6. Add Firebase env variables before switching auth/data/uploads away from local file storage:
+4. Add `GOOGLE_MAPS_API_KEY` in Render only if you want live Google Places autocomplete.
+5. Add the Firebase env variables in Render:
    - `VITE_FIREBASE_API_KEY`
    - `VITE_FIREBASE_AUTH_DOMAIN`
    - `VITE_FIREBASE_PROJECT_ID`
@@ -83,8 +80,7 @@ Recommended setup:
 
 Important Render note:
 
-- Render filesystems are ephemeral unless you use a disk
-- uploaded images and JSON-backed demo data will be lost on redeploy without the configured disk
+- Firestore and Firebase Storage replace the previous JSON and local-upload persistence layers
 - `AUTH_JWT_SECRET` is generated automatically by `render.yaml`, but you can replace it with your own secret in the Render dashboard
 - do not commit Firebase service account JSON files; keep them local or inject them through Render secrets
 
@@ -108,6 +104,4 @@ Demo passwords:
 - `POST /api/auth/login`
 - `GET /api/auth/me`
 
-Users are stored in `server/data/users.json`, created automatically on first run.
-
-When `DATA_DIR` is set, the backend stores user and listing JSON files there instead.
+Users and managed listings are stored in Firestore collections, and listing images are uploaded to Firebase Storage.

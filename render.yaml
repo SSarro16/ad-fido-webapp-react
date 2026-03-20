@@ -11,13 +11,25 @@ services:
         value: 22.14.0
       - key: AUTH_JWT_SECRET
         generateValue: true
-      - key: DATA_DIR
-        value: /var/data/adfido/data
-      - key: UPLOADS_DIR
-        value: /var/data/adfido/uploads
       - key: VITE_ENABLE_DEMO_AUTH
         value: "false"
-    disk:
-      name: adfido-storage
-      mountPath: /var/data/adfido
-      sizeGB: 1
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: VITE_FIREBASE_PROJECT_ID
+        sync: false
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+      - key: VITE_FIREBASE_APP_ID
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false

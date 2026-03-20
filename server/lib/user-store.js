@@ -1,12 +1,14 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { FieldValue } from 'firebase-admin/firestore';
+
+import { firebaseAdminDb } from './firebase-admin.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataDir = process.env.DATA_DIR
-  ? path.resolve(process.env.DATA_DIR)
-  : path.resolve(__dirname, '../data');
-const usersFilePath = path.join(dataDir, 'users.json');
+const legacyUsersFilePath = path.resolve(__dirname, '../data/users.json');
+const usersCollection = firebaseAdminDb.collection('users');
 
 const seededUsers = [
   {
@@ -110,21 +112,75 @@ function normalizeUser(user) {
   };
 }
 
-async function ensureUsersFile() {
-  await mkdir(dataDir, { recursive: true });
+async function seedUsersIfNeeded() {
+  const snapshot = await usersCollection.limit(1).get();
+
+  if (!snapshot.empty) {
+    return { seeded: false, count: snapshot.size };
+  }
+
+  let initialUsers = seededUsers;
 
   try {
-    await readFile(usersFilePath, 'utf8');
+    const legacyUsers = JSON.parse(await readFile(legacyUsersFilePath, 'utf8'));
+    if (Array.isArray(legacyUsers) && legacyUsers.length > 0) {
+      initialUsers = legacyUsers;
+    }
   } catch {
-    await writeFile(usersFilePath, JSON.stringify(seededUsers, null, 2));
+    // Fall back to seeded users when there is no legacy JSON snapshot to migrate.
   }
+
+  const batch = firebaseAdminDb.batch();
+
+  for (const user of initialUsers.map(normalizeUser)) {
+    batch.set(usersCollection.doc(user.id), {
+      ...user,
+      migratedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
+  await batch.commit();
+  return { seeded: true, count: initialUsers.length };
+}
+
+export async function ensureUsersSeeded() {
+  return seedUsersIfNeeded();
+}
+
+export async function getUserById(userId) {
+  await seedUsersIfNeeded();
+
+  const document = await usersCollection.doc(userId).get();
+  return document.exists ? normalizeUser(document.data()) : null;
+}
+
+export async function getUserByEmail(email) {
+  await seedUsersIfNeeded();
+
+  const snapshot = await usersCollection.where('email', '==', email).limit(1).get();
+  return snapshot.empty ? null : normalizeUser(snapshot.docs[0].data());
+}
+
+export async function getUserByFirebaseUid(firebaseUid) {
+  await seedUsersIfNeeded();
+
+  const snapshot = await usersCollection.where('firebaseUid', '==', firebaseUid).limit(1).get();
+  return snapshot.empty ? null : normalizeUser(snapshot.docs[0].data());
+}
+
+export async function upsertUser(user) {
+  await seedUsersIfNeeded();
+
+  const normalizedUser = normalizeUser(user);
+  await usersCollection.doc(normalizedUser.id).set(normalizedUser);
+  return normalizedUser;
 }
 
 export async function readUsers() {
-  await ensureUsersFile();
-  const raw = await readFile(usersFilePath, 'utf8');
-  const users = JSON.parse(raw);
-  const normalizedUsers = users.map(normalizeUser);
+  await seedUsersIfNeeded();
+
+  const snapshot = await usersCollection.get();
+  const normalizedUsers = snapshot.docs.map((document) => normalizeUser(document.data()));
 
   for (const seededUser of seededUsers) {
     if (
@@ -134,14 +190,5 @@ export async function readUsers() {
     }
   }
 
-  if (JSON.stringify(users) !== JSON.stringify(normalizedUsers)) {
-    await writeFile(usersFilePath, JSON.stringify(normalizedUsers, null, 2));
-  }
-
   return normalizedUsers;
-}
-
-export async function writeUsers(users) {
-  await ensureUsersFile();
-  await writeFile(usersFilePath, JSON.stringify(users.map(normalizeUser), null, 2));
 }

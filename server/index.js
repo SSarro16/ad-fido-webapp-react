@@ -1,7 +1,6 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,9 +12,25 @@ import {
   verifyAuthToken,
 } from './lib/auth.js';
 import { createStarterListing } from './lib/listing-templates.js';
-import { readManagedListings, writeManagedListings } from './lib/listing-store.js';
+import {
+  createManagedListing,
+  deleteManagedListingById,
+  ensureListingsSeeded,
+  getManagedListingById,
+  incrementManagedListingMetric,
+  readManagedListings,
+  updateManagedListingDocument,
+} from './lib/listing-store.js';
+import { createImageUploadMiddleware, uploadImagesToStorage } from './lib/storage.js';
 import { validateManagedListing } from './lib/listing-validation.js';
-import { readUsers, writeUsers } from './lib/user-store.js';
+import {
+  ensureUsersSeeded,
+  getUserByEmail,
+  getUserByFirebaseUid,
+  getUserById,
+  readUsers,
+  upsertUser,
+} from './lib/user-store.js';
 
 dotenv.config();
 
@@ -23,11 +38,7 @@ const app = express();
 const port = Number(process.env.PORT ?? 4000);
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY ?? '';
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDirectory = process.env.UPLOADS_DIR
-  ? path.resolve(process.env.UPLOADS_DIR)
-  : path.join(currentDirectory, 'uploads');
 const distDirectory = path.resolve(currentDirectory, '../dist');
-const allowedImageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 const sellerRoles = new Set(['breeder', 'shelter']);
 const manageableStatuses = new Set(['draft', 'in_review', 'published', 'rejected', 'removed']);
 const verifiedShelterPlaces = {
@@ -71,46 +82,12 @@ const verifiedShelterPlaces = {
   },
 };
 
-await fs.mkdir(uploadsDirectory, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (_request, _file, callback) => {
-    callback(null, uploadsDirectory);
-  },
-  filename: (_request, file, callback) => {
-    const safeBaseName = path
-      .basename(file.originalname, path.extname(file.originalname))
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 48);
-
-    const extension = path.extname(file.originalname).toLowerCase() || '.jpg';
-    callback(null, `${Date.now()}-${randomUUID()}-${safeBaseName || 'image'}${extension}`);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: {
-    fileSize: 8 * 1024 * 1024,
-    files: 8,
-  },
-  fileFilter: (_request, file, callback) => {
-    if (!allowedImageMimeTypes.has(file.mimetype)) {
-      callback(new Error('Sono consentiti solo file JPG, PNG, WEBP o GIF.'));
-      return;
-    }
-
-    callback(null, true);
-  },
-});
+const upload = createImageUploadMiddleware(multer);
 
 const breederListingLimit = 3;
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(uploadsDirectory));
 
 function isSellerRole(role) {
   return sellerRoles.has(role);
@@ -181,11 +158,10 @@ async function getAuthenticatedUser(request) {
 
   try {
     const payload = await verifyAuthToken(token);
-    const users = await readUsers();
-    let user = users.find((item) => item.firebaseUid === payload.uid);
+    let user = await getUserByFirebaseUid(payload.uid);
 
     if (!user && payload.email) {
-      const matchedByEmail = users.find((item) => item.email === payload.email);
+      const matchedByEmail = await getUserByEmail(payload.email);
 
       if (matchedByEmail) {
         user = {
@@ -194,9 +170,7 @@ async function getAuthenticatedUser(request) {
           emailVerified: payload.email_verified ?? matchedByEmail.emailVerified,
         };
 
-        await writeUsers(
-          users.map((item) => (item.id === matchedByEmail.id ? user : item))
-        );
+        await upsertUser(user);
       }
     }
 
@@ -213,7 +187,7 @@ async function getAuthenticatedUser(request) {
         createdAt: new Date().toISOString(),
       };
 
-      await writeUsers([...users, user]);
+      await upsertUser(user);
     }
 
     if (!user) {
@@ -439,6 +413,25 @@ function calculateAdminOverview(users, listings) {
   };
 }
 
+async function bootstrapFirestore() {
+  const [usersBootstrap, listingsBootstrap] = await Promise.all([
+    ensureUsersSeeded(),
+    ensureListingsSeeded(),
+  ]);
+
+  if (usersBootstrap.seeded) {
+    console.log(`[bootstrap] Firestore users imported: ${usersBootstrap.count}`);
+  } else {
+    console.log('[bootstrap] Firestore users already populated');
+  }
+
+  if (listingsBootstrap.seeded) {
+    console.log(`[bootstrap] Firestore listings imported: ${listingsBootstrap.count}`);
+  } else {
+    console.log('[bootstrap] Firestore listings already populated');
+  }
+}
+
 app.get('/api/health', (_request, response) => {
   response.json({
     ok: true,
@@ -561,15 +554,13 @@ app.patch('/api/auth/profile', async (request, response) => {
     return;
   }
 
-  const users = await readUsers();
-  const userIndex = users.findIndex((user) => user.id === auth.user.id);
+  const currentUser = await getUserById(auth.user.id);
 
-  if (userIndex === -1) {
+  if (!currentUser) {
     response.status(404).json({ message: 'Utente non trovato.' });
     return;
   }
 
-  const currentUser = users[userIndex];
   const updatedUser = {
     ...currentUser,
     name,
@@ -580,8 +571,7 @@ app.patch('/api/auth/profile', async (request, response) => {
         : organizationName || currentUser.organizationName || '',
   };
 
-  users[userIndex] = updatedUser;
-  await writeUsers(users);
+  await upsertUser(updatedUser);
 
   response.json({
     user: sanitizeUser(updatedUser),
@@ -592,12 +582,14 @@ app.patch('/api/auth/profile', async (request, response) => {
 app.get('/api/marketplace/listings', async (_request, response) => {
   const [listings, users] = await Promise.all([readManagedListings(), readUsers()]);
   const publishedListings = listings.filter((listing) => listing.status === 'published');
-  const trackedListings = listings.map((listing) =>
-    listing.status === 'published' ? incrementListingMetrics(listing, 'listImpressions') : listing
+  const trackedListings = publishedListings.map((listing) =>
+    incrementListingMetrics(listing, 'listImpressions')
   );
 
-  if (JSON.stringify(trackedListings) !== JSON.stringify(listings)) {
-    await writeManagedListings(trackedListings);
+  if (trackedListings.length > 0) {
+    await Promise.all(
+      trackedListings.map((listing) => incrementManagedListingMetric(listing.id, 'listImpressions'))
+    );
   }
 
   response.json({
@@ -611,19 +603,18 @@ app.get('/api/marketplace/listings', async (_request, response) => {
 });
 
 app.get('/api/marketplace/listings/:listingId', async (request, response) => {
-  const [listings, users] = await Promise.all([readManagedListings(), readUsers()]);
-  const listingIndex = listings.findIndex(
-    (item) => item.id === request.params.listingId && item.status === 'published'
-  );
+  const [listing, users] = await Promise.all([
+    getManagedListingById(request.params.listingId),
+    readUsers(),
+  ]);
 
-  if (listingIndex === -1) {
+  if (!listing || listing.status !== 'published') {
     response.status(404).json({ message: 'Annuncio non trovato.' });
     return;
   }
 
-  const trackedListing = incrementListingMetrics(listings[listingIndex], 'detailViews');
-  listings[listingIndex] = trackedListing;
-  await writeManagedListings(listings);
+  const trackedListing = incrementListingMetrics(listing, 'detailViews');
+  await incrementManagedListingMetric(trackedListing.id, 'detailViews');
 
   response.json({
     listing: buildPublicMarketplaceListing(
@@ -634,18 +625,14 @@ app.get('/api/marketplace/listings/:listingId', async (request, response) => {
 });
 
 app.post('/api/marketplace/listings/:listingId/contact-click', async (request, response) => {
-  const listings = await readManagedListings();
-  const listingIndex = listings.findIndex(
-    (item) => item.id === request.params.listingId && item.status === 'published'
-  );
+  const listing = await getManagedListingById(request.params.listingId);
 
-  if (listingIndex === -1) {
+  if (!listing || listing.status !== 'published') {
     response.status(404).json({ message: 'Annuncio non trovato.' });
     return;
   }
 
-  listings[listingIndex] = incrementListingMetrics(listings[listingIndex], 'contactClicks');
-  await writeManagedListings(listings);
+  await incrementManagedListingMetric(listing.id, 'contactClicks');
 
   response.status(204).send();
 });
@@ -657,7 +644,7 @@ app.post('/api/uploads/images', async (request, response) => {
     return;
   }
 
-  upload.array('images', 8)(request, response, (error) => {
+  upload.array('images', 8)(request, response, async (error) => {
     if (error) {
       response.status(400).json({
         message: error instanceof Error ? error.message : 'Upload immagini non riuscito.',
@@ -672,12 +659,23 @@ app.post('/api/uploads/images', async (request, response) => {
       return;
     }
 
-    response.status(201).json({
-      files: files.map((file) => ({
-        name: file.originalname,
-        url: `${request.protocol}://${request.get('host')}/uploads/${file.filename}`,
-      })),
-    });
+    try {
+      const uploadedFiles = await uploadImagesToStorage(files);
+
+      response.status(201).json({
+        files: uploadedFiles.map((file) => ({
+          name: file.name,
+          url: file.url,
+        })),
+      });
+    } catch (uploadError) {
+      response.status(500).json({
+        message:
+          uploadError instanceof Error
+            ? uploadError.message
+            : 'Upload immagini su Firebase Storage non riuscito.',
+      });
+    }
   });
 });
 
@@ -697,8 +695,7 @@ app.get('/api/subscriber/listings', async (request, response) => {
       ...createStarterListing(auth.user.id, auth.user.organizationName ?? auth.user.name),
     };
 
-    listings.unshift(starterListing);
-    await writeManagedListings(listings);
+    await createManagedListing(starterListing);
     visibleListings = [starterListing];
   }
 
@@ -747,8 +744,7 @@ app.post('/api/subscriber/listings', async (request, response) => {
     metrics: createEmptyMetrics(),
     updatedAt: now,
   };
-  listings.unshift(nextListing);
-  await writeManagedListings(listings);
+  await createManagedListing(nextListing);
 
   response.status(201).json({ listing: sanitizeManagedListing(nextListing) });
 });
@@ -767,15 +763,12 @@ app.put('/api/subscriber/listings/:listingId', async (request, response) => {
     return;
   }
 
-  const listings = await readManagedListings();
-  const listingIndex = listings.findIndex((listing) => listing.id === request.params.listingId);
+  const currentListing = await getManagedListingById(request.params.listingId);
 
-  if (listingIndex === -1) {
+  if (!currentListing) {
     response.status(404).json({ message: 'Annuncio non trovato.' });
     return;
   }
-
-  const currentListing = listings[listingIndex];
 
   if (currentListing.ownerId !== auth.user.id) {
     response.status(403).json({ message: 'Non puoi modificare questo annuncio.' });
@@ -804,8 +797,7 @@ app.put('/api/subscriber/listings/:listingId', async (request, response) => {
     updatedAt: now,
   };
 
-  listings[listingIndex] = updatedListing;
-  await writeManagedListings(listings);
+  await updateManagedListingDocument(updatedListing);
 
   response.json({ listing: sanitizeManagedListing(updatedListing) });
 });
@@ -825,15 +817,12 @@ app.patch('/api/subscriber/listings/:listingId/status', async (request, response
     return;
   }
 
-  const listings = await readManagedListings();
-  const listingIndex = listings.findIndex((listing) => listing.id === request.params.listingId);
+  const currentListing = await getManagedListingById(request.params.listingId);
 
-  if (listingIndex === -1) {
+  if (!currentListing) {
     response.status(404).json({ message: 'Annuncio non trovato.' });
     return;
   }
-
-  const currentListing = listings[listingIndex];
 
   if (currentListing.ownerId !== auth.user.id) {
     response.status(403).json({ message: 'Non puoi modificare questo annuncio.' });
@@ -849,8 +838,7 @@ app.patch('/api/subscriber/listings/:listingId/status', async (request, response
     updatedAt: now,
   };
 
-  listings[listingIndex] = updatedListing;
-  await writeManagedListings(listings);
+  await updateManagedListingDocument(updatedListing);
 
   response.json({ listing: sanitizeManagedListing(updatedListing) });
 });
@@ -862,8 +850,7 @@ app.delete('/api/subscriber/listings/:listingId', async (request, response) => {
     return;
   }
 
-  const listings = await readManagedListings();
-  const matchedListing = listings.find((listing) => listing.id === request.params.listingId);
+  const matchedListing = await getManagedListingById(request.params.listingId);
 
   if (!matchedListing) {
     response.status(404).json({ message: 'Annuncio non trovato.' });
@@ -875,8 +862,7 @@ app.delete('/api/subscriber/listings/:listingId', async (request, response) => {
     return;
   }
 
-  const nextListings = listings.filter((listing) => listing.id !== request.params.listingId);
-  await writeManagedListings(nextListings);
+  await deleteManagedListingById(request.params.listingId);
 
   response.status(204).send();
 });
@@ -948,15 +934,12 @@ app.patch('/api/admin/listings/:listingId/moderation', async (request, response)
     return;
   }
 
-  const listings = await readManagedListings();
-  const listingIndex = listings.findIndex((listing) => listing.id === request.params.listingId);
+  const currentListing = await getManagedListingById(request.params.listingId);
 
-  if (listingIndex === -1) {
+  if (!currentListing) {
     response.status(404).json({ message: 'Annuncio non trovato.' });
     return;
   }
-
-  const currentListing = listings[listingIndex];
   const now = new Date().toISOString();
   const nextStatus =
     action === 'approve'
@@ -983,8 +966,7 @@ app.patch('/api/admin/listings/:listingId/moderation', async (request, response)
     updatedAt: now,
   };
 
-  listings[listingIndex] = updatedListing;
-  await writeManagedListings(listings);
+  await updateManagedListingDocument(updatedListing);
 
   response.json({ listing: sanitizeManagedListing(updatedListing) });
 });
@@ -992,7 +974,7 @@ app.patch('/api/admin/listings/:listingId/moderation', async (request, response)
 app.use(express.static(distDirectory));
 
 app.use(async (request, response, next) => {
-  if (request.path.startsWith('/api/') || request.path.startsWith('/uploads/')) {
+  if (request.path.startsWith('/api/')) {
     next();
     return;
   }
@@ -1003,6 +985,8 @@ app.use(async (request, response, next) => {
     next(error);
   }
 });
+
+await bootstrapFirestore();
 
 app.listen(port, () => {
   console.log(`AdFido backend attivo su http://localhost:${port}`);

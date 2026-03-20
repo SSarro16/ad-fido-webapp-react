@@ -1,12 +1,14 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { FieldValue } from 'firebase-admin/firestore';
+
+import { firebaseAdminDb } from './firebase-admin.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataDir = process.env.DATA_DIR
-  ? path.resolve(process.env.DATA_DIR)
-  : path.resolve(__dirname, '../data');
-const listingsFilePath = path.join(dataDir, 'listings.json');
+const legacyListingsFilePath = path.resolve(__dirname, '../data/listings.json');
+const listingsCollection = firebaseAdminDb.collection('listings');
 
 const emptyMetrics = {
   detailViews: 0,
@@ -199,21 +201,88 @@ function normalizeListing(listing) {
   };
 }
 
-async function ensureListingsFile() {
-  await mkdir(dataDir, { recursive: true });
+async function seedListingsIfNeeded() {
+  const snapshot = await listingsCollection.limit(1).get();
+
+  if (!snapshot.empty) {
+    return { seeded: false, count: snapshot.size };
+  }
+
+  let initialListings = seededListings;
 
   try {
-    await readFile(listingsFilePath, 'utf8');
+    const legacyListings = JSON.parse(await readFile(legacyListingsFilePath, 'utf8'));
+    if (Array.isArray(legacyListings) && legacyListings.length > 0) {
+      initialListings = legacyListings;
+    }
   } catch {
-    await writeFile(listingsFilePath, JSON.stringify(seededListings, null, 2));
+    // Fall back to seeded listings when there is no legacy JSON snapshot to migrate.
   }
+
+  const batch = firebaseAdminDb.batch();
+
+  for (const listing of initialListings.map(normalizeListing)) {
+    batch.set(listingsCollection.doc(listing.id), {
+      ...listing,
+      migratedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
+  await batch.commit();
+  return { seeded: true, count: initialListings.length };
+}
+
+export async function ensureListingsSeeded() {
+  return seedListingsIfNeeded();
+}
+
+export async function getManagedListingById(listingId) {
+  await seedListingsIfNeeded();
+
+  const document = await listingsCollection.doc(listingId).get();
+  return document.exists ? normalizeListing(document.data()) : null;
+}
+
+export async function createManagedListing(listing) {
+  await seedListingsIfNeeded();
+
+  const normalizedListing = normalizeListing(listing);
+  await listingsCollection.doc(normalizedListing.id).set(normalizedListing);
+  return normalizedListing;
+}
+
+export async function updateManagedListingDocument(listing) {
+  await seedListingsIfNeeded();
+
+  const normalizedListing = normalizeListing(listing);
+  await listingsCollection.doc(normalizedListing.id).set(normalizedListing);
+  return normalizedListing;
+}
+
+export async function deleteManagedListingById(listingId) {
+  await seedListingsIfNeeded();
+  await listingsCollection.doc(listingId).delete();
+}
+
+export async function incrementManagedListingMetric(listingId, metricKey, amount = 1) {
+  await seedListingsIfNeeded();
+
+  await listingsCollection.doc(listingId).set(
+    {
+      metrics: {
+        [metricKey]: FieldValue.increment(amount),
+      },
+      updatedAt: new Date().toISOString(),
+    },
+    { merge: true }
+  );
 }
 
 export async function readManagedListings() {
-  await ensureListingsFile();
-  const raw = await readFile(listingsFilePath, 'utf8');
-  const listings = JSON.parse(raw);
-  const normalizedListings = listings.map(normalizeListing);
+  await seedListingsIfNeeded();
+
+  const snapshot = await listingsCollection.get();
+  const normalizedListings = snapshot.docs.map((document) => normalizeListing(document.data()));
 
   for (const seededListing of seededListings) {
     if (!normalizedListings.some((listing) => listing.id === seededListing.id)) {
@@ -221,14 +290,5 @@ export async function readManagedListings() {
     }
   }
 
-  if (JSON.stringify(listings) !== JSON.stringify(normalizedListings)) {
-    await writeFile(listingsFilePath, JSON.stringify(normalizedListings, null, 2));
-  }
-
   return normalizedListings;
-}
-
-export async function writeManagedListings(listings) {
-  await ensureListingsFile();
-  await writeFile(listingsFilePath, JSON.stringify(listings.map(normalizeListing), null, 2));
 }

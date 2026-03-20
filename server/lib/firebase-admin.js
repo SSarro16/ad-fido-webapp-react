@@ -1,9 +1,12 @@
+import dotenv from 'dotenv';
 import fs from 'node:fs';
 
 import { cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
+
+dotenv.config();
 
 function readServiceAccountFromEnv() {
   if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
@@ -36,11 +39,15 @@ function getFirebaseAdminApp() {
   return initializeApp({
     credential: cert(serviceAccount),
     projectId: process.env.FIREBASE_PROJECT_ID ?? serviceAccount.project_id,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET ?? serviceAccount.storageBucket,
+    storageBucket:
+      process.env.FIREBASE_STORAGE_BUCKET ??
+      serviceAccount.storageBucket ??
+      serviceAccount.storage_bucket,
   });
 }
 
 export const firebaseAdminApp = getFirebaseAdminApp();
 export const firebaseAdminAuth = getAuth(firebaseAdminApp);
 export const firebaseAdminDb = getFirestore(firebaseAdminApp);
+firebaseAdminDb.settings({ ignoreUndefinedProperties: true });
 export const firebaseAdminStorage = getStorage(firebaseAdminApp);
