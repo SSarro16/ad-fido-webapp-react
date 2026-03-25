@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+
+# build
+dist/
+coverage/
+vite.config.ts.timestamp-*
+.expo/
+server/data/
+server/uploads/
+
+# logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# local env files
+.env
+.env*.local
+*-firebase-adminsdk-*.json
+firebase-adminsdk-*.json
+
+# macOS
+.DS_Store
+*.pem
+
+# typescript
+*.tsbuildinfo
+
+# private planning inputs
+/version-control/
+/AdFido - Design & Funzionalità 315676a6bfc5805893caebb530ee9709.md
+/AdFido - Design & Funzionalit*.md
+
+/project_plan.md
+/IMPLEMENTATION_BACKLOG.md
+/IMPLEMENTATION_SESSION_*.md
