@@ -458,13 +458,13 @@ export function HomePage() {
       title: 'Allevatore privato',
       description: 'Per chi pubblica cucciolate e disponibilita dal proprio allevamento.',
       imageUrl:
-        'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
     },
     {
       title: 'Canile / Rifugio',
       description: 'Per chi gestisce affidi, canili e rifugi.',
       imageUrl:
-        'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80&sat=-15',
       accent: true,
     },
   ];
