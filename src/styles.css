@@ -326,6 +326,45 @@ img {
   color: white;
 }
 
+.mobile-tabbar {
+  display: none;
+}
+
+.mobile-tabbar__inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+.mobile-tabbar__link {
+  display: grid;
+  justify-items: center;
+  gap: 0.32rem;
+  min-height: 4.1rem;
+  padding: 0.72rem 0.55rem 0.68rem;
+  border-radius: 1.15rem;
+  color: var(--text-soft);
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.1;
+  transition:
+    background 220ms ease,
+    color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.mobile-tabbar__link--active {
+  background: rgba(15, 61, 94, 0.1);
+  color: var(--secondary);
+}
+
+.mobile-tabbar__link span {
+  display: block;
+}
+
 .topbar__cta,
 .button {
   border: 0;
@@ -4770,6 +4809,45 @@ img {
   }
 }
 
+@media (max-width: 760px) {
+  .topbar__inner {
+    min-height: auto;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .app-shell__body {
+    padding-bottom: calc(5.8rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-tabbar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 14;
+    display: block;
+    padding: 0.65rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    background:
+      linear-gradient(180deg, rgba(246, 239, 232, 0.18), rgba(246, 239, 232, 0.94) 28%),
+      rgba(246, 239, 232, 0.96);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid var(--surface-border);
+  }
+
+  .mobile-tabbar__inner {
+    width: min(100%, 34rem);
+    margin: 0 auto;
+    padding: 0.42rem;
+    border-radius: 1.45rem;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(15, 61, 94, 0.08);
+    box-shadow: 0 18px 44px rgba(15, 61, 94, 0.14);
+  }
+}
+
 @media (min-width: 761px) and (max-width: 860px) {
   .topbar__inner {
     align-items: center;
@@ -4992,6 +5070,21 @@ img {
     width: 4.8rem;
     height: 3.7rem;
   }
+
+  .mobile-tabbar {
+    padding-inline: 0.6rem;
+  }
+
+  .mobile-tabbar__inner {
+    gap: 0.35rem;
+    border-radius: 1.25rem;
+  }
+
+  .mobile-tabbar__link {
+    min-height: 3.95rem;
+    padding-inline: 0.35rem;
+    font-size: 0.72rem;
+  }
 }
 
 @media (min-width: 481px) and (max-width: 640px) {
@@ -5076,5 +5169,21 @@ img {
     width: 100%;
     flex: initial;
     min-height: 3rem;
+  }
+
+  .mobile-tabbar {
+    padding-inline: 0.5rem;
+  }
+
+  .mobile-tabbar__inner {
+    gap: 0.25rem;
+    padding: 0.32rem;
+  }
+
+  .mobile-tabbar__link {
+    min-height: 3.7rem;
+    padding: 0.58rem 0.2rem;
+    border-radius: 1rem;
+    font-size: 0.69rem;
   }
 }

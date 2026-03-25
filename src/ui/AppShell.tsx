@@ -40,9 +40,17 @@ export function AppShell() {
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
     ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
   ];
-  const navigationClassName = `nav${session ? ' nav--signed' : ' nav--public'}`;
   const dashboardHref = '/subscriber';
   const dashboardLabel = 'Dashboard professionale';
+  const mobileNavigation = session
+    ? [
+        { to: '/', label: 'Home', icon: LayoutGrid },
+        { to: '/listings', label: 'Annunci', icon: Search },
+        { to: dashboardHref, label: 'Dashboard', icon: LayoutDashboard },
+        { to: '/account', label: 'Profilo', icon: UserCircle2 },
+      ]
+    : navigation;
+  const navigationClassName = `nav${session ? ' nav--signed' : ' nav--public'}`;
 
   return (
     <div className="app-shell">
@@ -202,6 +210,26 @@ export function AppShell() {
           </div>
         </div>
       </footer>
+
+      <nav className="mobile-tabbar" aria-label="Navigazione mobile principale">
+        <div className="mobile-tabbar__inner">
+          {mobileNavigation.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `mobile-tabbar__link${isActive ? ' mobile-tabbar__link--active' : ''}`
+                }
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }
