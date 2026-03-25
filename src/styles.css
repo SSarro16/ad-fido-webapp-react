@@ -1298,10 +1298,13 @@ img {
 .contact-card {
   display: grid;
   gap: 0.95rem;
+  padding: 1.25rem;
+  border-radius: 1.45rem;
 }
 
 .contact-card strong {
   font-size: 1.15rem;
+  line-height: 1.15;
 }
 
 .contact-layout,
@@ -1339,11 +1342,13 @@ img {
 
 .contact-status-card {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.4rem;
   padding: 1rem 1.05rem;
   border-radius: 1.1rem;
-  background: rgba(15, 61, 94, 0.04);
-  border: 1px solid var(--surface-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 250, 252, 0.92)),
+    rgba(15, 61, 94, 0.03);
+  border: 1px solid rgba(15, 61, 94, 0.07);
 }
 
 .contact-status-card p,
@@ -1400,8 +1405,8 @@ img {
 
 .contact-card--map {
   background:
-    linear-gradient(150deg, rgba(15, 61, 94, 0.92), rgba(32, 89, 129, 0.9)),
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 26rem);
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 18rem),
+    linear-gradient(150deg, rgba(15, 61, 94, 0.94), rgba(26, 76, 113, 0.9));
   color: white;
 }
 
@@ -1436,8 +1441,9 @@ img {
   min-height: 2.9rem;
   padding: 0.8rem 0.9rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 700;
 }
 
 .contact-socials {
@@ -1447,7 +1453,7 @@ img {
 
 .contact-form-panel__header {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 
 .contact-form-panel__header p {
@@ -1459,6 +1465,7 @@ img {
   margin: 0;
   color: var(--text-soft);
   font-size: 0.92rem;
+  line-height: 1.55;
 }
 
 .contact-form__footer {

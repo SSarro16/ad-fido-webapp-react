@@ -867,8 +867,8 @@ export function HomePage() {
           <SectionTitle
             className="section-title--wide"
             eyebrow="Contatti"
-            title="Partnership, richieste e attivazioni raccolte in modo piu ordinato"
-            description="Niente contatti finti: qui raccogliamo interesse reale e prepariamo il passaggio a un backend completo."
+            title="Contatti, collaborazioni e richieste"
+            description="Se vuoi scriverci per il progetto, per una partnership o per capire meglio come sta evolvendo AdFido, qui trovi un punto di contatto semplice e diretto."
           />
 
           <div className="contact-layout">
@@ -877,16 +877,16 @@ export function HomePage() {
                 <div className="contact-card__icon">
                   <MapPin size={20} />
                 </div>
-                <strong>Presenza nazionale</strong>
+                <strong>Progetto in crescita</strong>
                 <p>
-                  Progetto pensato per lavorare su piu citta italiane. Sede operativa e canali
-                  ufficiali saranno pubblicati appena definiti.
+                  AdFido nasce con un focus nazionale e con l obiettivo di diventare un punto di
+                  riferimento chiaro per annunci, affidi e profili professionali.
                 </p>
                 <div className="contact-map">
-                  <span>Nord Italia</span>
-                  <span>Centro Italia</span>
-                  <span>Sud Italia</span>
-                  <span>Isole</span>
+                  <span>Privati</span>
+                  <span>Allevatori</span>
+                  <span>Canili e rifugi</span>
+                  <span>Partner</span>
                 </div>
               </article>
 
@@ -894,46 +894,46 @@ export function HomePage() {
                 <div className="contact-card__icon">
                   <Sparkles size={20} />
                 </div>
-                <strong>Canali social in preparazione</strong>
+                <strong>Confronto aperto</strong>
                 <p>
-                  Identita, naming definitivo e pagine pubbliche arriveranno insieme alla
-                  formalizzazione del brand.
+                  In questa fase ci interessa raccogliere riscontri utili sul prodotto, capire cosa
+                  funziona meglio e quali parti vanno rese piu chiare.
                 </p>
                 <div className="contact-socials">
-                  <span className="chip">Instagram in apertura</span>
-                  <span className="chip">TikTok in apertura</span>
-                  <span className="chip">YouTube in apertura</span>
+                  <span className="chip">Feedback sul sito</span>
+                  <span className="chip">Richieste di collaborazione</span>
+                  <span className="chip">Suggerimenti di prodotto</span>
                 </div>
               </article>
             </Reveal>
 
             <Reveal className="panel contact-form-panel" delay={0.08} y={20}>
               <div className="contact-form-panel__header">
-                <strong>Lascia la tua richiesta</strong>
+                <strong>Scrivici</strong>
                 <p>
-                  Compila il form in modo semplice e ordinato: per ora la richiesta viene salvata in
-                  bozza sul browser.
+                  Compila il form se vuoi lasciare una richiesta, proporre una collaborazione o
+                  mandarci un messaggio legato al progetto.
                 </p>
               </div>
 
               <div className="contact-form-panel__status">
                 <article className="contact-status-card">
-                  <span className="contact-status-card__label">Stato</span>
-                  <strong>{isSavingContact ? 'Salvataggio in corso' : 'Coda locale attiva'}</strong>
+                  <span className="contact-status-card__label">Stato form</span>
+                  <strong>{isSavingContact ? 'Salvataggio in corso' : 'Pronto all invio'}</strong>
                   <p>
                     {contactDrafts.length > 0
-                      ? `${contactDrafts.length} richieste gia salvate in questo browser.`
-                      : 'Nessuna richiesta salvata ancora in questo browser.'}
+                      ? `${contactDrafts.length} messaggi salvati in questo browser.`
+                      : 'Nessun messaggio salvato in questo browser.'}
                   </p>
                 </article>
 
                 <article className="contact-status-card">
-                  <span className="contact-status-card__label">Ultima voce</span>
-                  <strong>{contactDrafts[0]?.topic ?? 'Nessuna richiesta ancora'}</strong>
+                  <span className="contact-status-card__label">Ultimo contatto</span>
+                  <strong>{contactDrafts[0]?.topic ?? 'Nessun messaggio ancora'}</strong>
                   <p>
                     {contactDrafts[0]
                       ? `${contactDrafts[0].audience} · ${new Date(contactDrafts[0].createdAt).toLocaleDateString('it-IT')}`
-                      : 'Appena invii il form, comparira qui.'}
+                      : 'Dopo il primo invio comparira qui.'}
                   </p>
                 </article>
               </div>
@@ -1030,7 +1030,8 @@ export function HomePage() {
 
                 <div className="contact-form__footer">
                   <p className="contact-form__hint">
-                    La bozza resta sul tuo browser finche non colleghiamo il form al backend reale.
+                    Il messaggio viene salvato in locale in questa beta, cosi non perdi il contenuto
+                    mentre rifiniamo il flusso definitivo.
                   </p>
 
                   <button
@@ -1043,7 +1044,7 @@ export function HomePage() {
                     ) : (
                       <Send size={18} />
                     )}
-                    {isSavingContact ? 'Salvataggio...' : 'Salva richiesta'}
+                    {isSavingContact ? 'Salvataggio...' : 'Invia messaggio'}
                   </button>
                 </div>
               </form>
