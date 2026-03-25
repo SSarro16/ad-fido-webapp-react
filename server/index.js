@@ -643,19 +643,29 @@ app.post('/api/feedback', async (request, response) => {
   const name = String(request.body?.name ?? '').trim();
   const email = String(request.body?.email ?? '').trim();
   const message = String(request.body?.message ?? '').trim();
+  const requestTag = `feedback-${randomUUID()}`;
+
+  console.info('[feedback] request received', {
+    requestTag,
+    hasName: Boolean(name),
+    hasEmail: Boolean(email),
+    messageLength: message.length,
+  });
 
   if (message.length < 8) {
+    console.warn('[feedback] validation failed: message too short', { requestTag });
     response.status(400).json({ message: 'Il feedback deve contenere almeno 8 caratteri.' });
     return;
   }
 
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    console.warn('[feedback] validation failed: invalid email', { requestTag, email });
     response.status(400).json({ message: 'L email inserita non e valida.' });
     return;
   }
 
   const entry = await createFeedbackEntry({
-    id: `feedback-${randomUUID()}`,
+    id: requestTag,
     name,
     email,
     message,
@@ -663,18 +673,34 @@ app.post('/api/feedback', async (request, response) => {
     createdAt: new Date().toISOString(),
   });
 
+  console.info('[feedback] firestore save completed', {
+    requestTag,
+    feedbackId: entry.id,
+  });
+
   let mailDelivery;
 
   try {
     mailDelivery = await sendFeedbackMail(entry);
   } catch (error) {
-    console.error('[feedback-mail] delivery failed', error);
+    console.error('[feedback-mail] delivery failed', {
+      requestTag,
+      message: error instanceof Error ? error.message : 'unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     mailDelivery = {
       delivered: false,
       channel: 'smtp-error',
       mailbox: process.env.FEEDBACK_MAIL_TO?.trim() || 'simone.sarro@outlook.it',
     };
   }
+
+  console.info('[feedback] request completed', {
+    requestTag,
+    deliveredTo: mailDelivery.delivered ? 'Firestore + email' : 'Firestore',
+    emailChannel: mailDelivery.channel,
+    mailbox: mailDelivery.mailbox,
+  });
 
   response.status(201).json({
     feedback: entry,

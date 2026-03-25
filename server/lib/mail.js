@@ -41,12 +41,22 @@ export async function sendFeedbackMail(feedback) {
   const smtpConfig = readSmtpConfig();
 
   if (!smtpConfig) {
+    console.info('[feedback-mail] smtp disabled or incomplete configuration');
     return {
       delivered: false,
       channel: 'disabled',
       mailbox: 'simone.sarro@outlook.it',
     };
   }
+
+  console.info('[feedback-mail] smtp configuration detected', {
+    host: smtpConfig.host,
+    port: smtpConfig.port,
+    secure: smtpConfig.secure,
+    from: smtpConfig.from,
+    to: smtpConfig.to,
+    hasReplyTo: Boolean(feedback.email),
+  });
 
   const transporter = nodemailer.createTransport({
     host: smtpConfig.host,
@@ -70,6 +80,11 @@ export async function sendFeedbackMail(feedback) {
       setTimeout(() => reject(new Error('SMTP delivery timeout exceeded.')), MAIL_TIMEOUT_MS);
     }),
   ]);
+
+  console.info('[feedback-mail] smtp delivery completed', {
+    to: smtpConfig.to,
+    replyTo: feedback.email || null,
+  });
 
   return {
     delivered: true,
