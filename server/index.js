@@ -22,6 +22,7 @@ import {
   updateManagedListingDocument,
 } from './lib/listing-store.js';
 import { createFeedbackEntry, readFeedbackEntries } from './lib/feedback-store.js';
+import { sendFeedbackMail } from './lib/mail.js';
 import { createImageUploadMiddleware, uploadImagesToStorage } from './lib/storage.js';
 import { validateManagedListing } from './lib/listing-validation.js';
 import {
@@ -662,10 +663,23 @@ app.post('/api/feedback', async (request, response) => {
     createdAt: new Date().toISOString(),
   });
 
+  let mailDelivery;
+
+  try {
+    mailDelivery = await sendFeedbackMail(entry);
+  } catch (error) {
+    console.error('[feedback-mail] delivery failed', error);
+    mailDelivery = {
+      delivered: false,
+      channel: 'smtp-error',
+      mailbox: process.env.FEEDBACK_MAIL_TO?.trim() || 'simone.sarro@outlook.it',
+    };
+  }
+
   response.status(201).json({
     feedback: entry,
-    deliveredTo: 'Firestore',
-    mailbox: 'simone.sarro@outlook.it',
+    deliveredTo: mailDelivery.delivered ? 'Firestore + email' : 'Firestore',
+    emailDelivery: mailDelivery,
   });
 });
 
