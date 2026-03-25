@@ -114,12 +114,12 @@ export function AppShell() {
             </div>
           ) : (
             <div className="topbar__actions">
-              <NavLink className="button button--ghost" to="/register">
-                Crea account
+              <NavLink className="topbar__secondary-action" to="/register">
+                Registrati
               </NavLink>
-              <NavLink className="topbar__cta" to="/login">
-                <LogIn size={18} />
-                Accedi
+              <NavLink className="topbar__primary-action" to="/login">
+                <LogIn size={16} />
+                <span>Accedi</span>
               </NavLink>
             </div>
           )}
