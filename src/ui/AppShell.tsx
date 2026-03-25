@@ -40,6 +40,7 @@ export function AppShell() {
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
     ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
     ...(session ? [{ to: '/account', label: 'Profilo', icon: UserCircle2 }] : []),
+    ...(session ? [{ action: 'logout' as const, label: 'Logout', icon: LogOut }] : []),
   ];
   const navigationClassName = `nav${session ? ' nav--signed' : ' nav--public'}`;
   const handleLogout = () => {
@@ -144,6 +145,20 @@ export function AppShell() {
         <div className="mobile-tabbar__inner">
           {mobileNavigation.map((item) => {
             const Icon = item.icon;
+            if ('action' in item) {
+              return (
+                <button
+                  key={item.action}
+                  type="button"
+                  className="mobile-tabbar__link mobile-tabbar__link--action"
+                  onClick={handleLogout}
+                >
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            }
+
             return (
               <NavLink
                 key={item.to}
