@@ -1,10 +1,10 @@
 import {
   BookOpenText,
-  CircleUserRound,
   Heart,
   LayoutDashboard,
   LayoutGrid,
   LogIn,
+  LogOut,
   PawPrint,
   Search,
   UserCircle2,
@@ -26,14 +26,6 @@ export function AppShell() {
   const showGlobalLoader =
     navigationState.state !== 'idle' || !initialized || authStatus === 'loading';
   const canManageListings = session?.user.role === 'breeder' || session?.user.role === 'shelter';
-  const professionalLabel =
-    session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
-      ? 'Canile / Rifugio'
-      : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
-        ? 'Allevatore privato'
-        : session?.user.role === 'admin'
-          ? 'Team AdFido'
-          : 'Area personale';
   const navigation = [
     { to: '/', label: 'Home', icon: LayoutGrid },
     { to: '/listings', label: 'Annunci', icon: Search },
@@ -42,15 +34,26 @@ export function AppShell() {
   ];
   const dashboardHref = '/subscriber';
   const dashboardLabel = 'Dashboard professionale';
-  const mobileNavigation = session
-    ? [
-        { to: '/', label: 'Home', icon: LayoutGrid },
-        { to: '/listings', label: 'Annunci', icon: Search },
-        { to: dashboardHref, label: 'Dashboard', icon: LayoutDashboard },
-        { to: '/account', label: 'Profilo', icon: UserCircle2 },
-      ]
-    : navigation;
+  const mobileNavigation = [
+    { to: '/', label: 'Home', icon: LayoutGrid },
+    { to: '/listings', label: 'Annunci', icon: Search },
+    { to: '/articles', label: 'Articoli', icon: BookOpenText },
+    ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
+    ...(session ? [{ to: '/account', label: 'Profilo', icon: UserCircle2 }] : []),
+  ];
   const navigationClassName = `nav${session ? ' nav--signed' : ' nav--public'}`;
+  const handleLogout = () => {
+    logout();
+    showToast({
+      title: 'Logout completato',
+      description: 'La sessione e stata chiusa correttamente.',
+      tone: 'info',
+    });
+    navigate('/login', {
+      replace: true,
+      state: { message: 'Logout completato. Puoi accedere di nuovo quando vuoi.' },
+    });
+  };
 
   return (
     <div className="app-shell">
@@ -101,16 +104,21 @@ export function AppShell() {
           </nav>
 
           {session ? (
-            <div className="topbar__user topbar__user--card">
-              <span className="topbar__avatar">
-                <CircleUserRound size={18} />
-              </span>
-              <div>
-                <strong>{session.user.name}</strong>
-                <small>
-                  {session.user.role === 'user' ? 'Account personale' : professionalLabel}
-                </small>
-              </div>
+            <div className="topbar__actions topbar__actions--signed">
+              {canManageListings ? (
+                <NavLink className="topbar__utility-link" to={dashboardHref}>
+                  <LayoutDashboard size={16} />
+                  <span>{dashboardLabel}</span>
+                </NavLink>
+              ) : null}
+              <NavLink className="topbar__secondary-action" to="/account">
+                <UserCircle2 size={16} />
+                <span>Profilo</span>
+              </NavLink>
+              <button className="topbar__logout-link" type="button" onClick={handleLogout}>
+                <LogOut size={16} />
+                <span>Logout</span>
+              </button>
             </div>
           ) : (
             <div className="topbar__actions">
@@ -130,86 +138,7 @@ export function AppShell() {
         <main>
           <Outlet />
         </main>
-
-        {session ? (
-          <aside className="account-aside">
-            <div className="account-aside__card">
-              <div className="account-aside__profile">
-                <span className="account-aside__avatar">
-                  <CircleUserRound size={20} />
-                </span>
-              </div>
-
-              <div className="account-aside__links">
-                {canManageListings ? (
-                  <NavLink
-                    className={({ isActive }) =>
-                      `account-aside__link${isActive ? ' account-aside__link--active' : ''}`
-                    }
-                    to={dashboardHref}
-                    title={dashboardLabel}
-                  >
-                    <LayoutDashboard size={18} />
-                    <span>{dashboardLabel}</span>
-                  </NavLink>
-                ) : null}
-
-                <NavLink
-                  className={({ isActive }) =>
-                    `account-aside__link${isActive ? ' account-aside__link--active' : ''}`
-                  }
-                  to="/account"
-                  title="Profilo"
-                >
-                  <UserCircle2 size={18} />
-                  <span>Profilo</span>
-                </NavLink>
-              </div>
-
-              <button
-                className="button button--ghost account-aside__logout"
-                type="button"
-                title="Logout"
-                onClick={() => {
-                  logout();
-                  showToast({
-                    title: 'Logout completato',
-                    description: 'La sessione e stata chiusa correttamente.',
-                    tone: 'info',
-                  });
-                  navigate('/login', {
-                    replace: true,
-                    state: { message: 'Logout completato. Puoi accedere di nuovo quando vuoi.' },
-                  });
-                }}
-              >
-                Esci
-              </button>
-            </div>
-          </aside>
-        ) : null}
       </div>
-
-      <footer className="site-footer">
-        <div className="container site-footer__inner">
-          <div className="site-footer__brand">
-            <span className="site-footer__eyebrow">AdFido</span>
-            <strong>Annunci per cani con profili curati, contatti seri e moderazione reale.</strong>
-            <p>
-              Una base digitale pensata per leggere bene ogni scheda, distinguere ruoli e
-              responsabilita tra allevatori privati, canili, rifugi e utenti finali, e far partire
-              contatti piu consapevoli.
-            </p>
-          </div>
-
-          <div className="site-footer__meta">
-            <a href="/#contatti">Richiedi aggiornamenti progetto</a>
-            <span>Roadmap prodotto e onboarding in evoluzione continua</span>
-            <span>Contatti pubblici definitivi esposti solo prima del go-live operativo</span>
-            <span>Progetto curato da Simone Sarro</span>
-          </div>
-        </div>
-      </footer>
 
       <nav className="mobile-tabbar" aria-label="Navigazione mobile principale">
         <div className="mobile-tabbar__inner">

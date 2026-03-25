@@ -186,6 +186,95 @@ function EditorialCarousel({ items, title, eyebrow, tone = 'default' }: Editoria
   );
 }
 
+function HomeFooter() {
+  const footerGroups = [
+    {
+      title: 'Esplora AdFido',
+      links: [
+        { label: 'Annunci disponibili', to: '/listings' },
+        { label: 'Articoli e guide', to: '/articles' },
+        { label: 'Area personale', to: '/account' },
+      ],
+    },
+    {
+      title: 'Per professionisti',
+      links: [
+        { label: 'Crea account', to: '/register' },
+        { label: 'Dashboard professionale', to: '/subscriber' },
+        { label: 'Pubblica i tuoi annunci', to: '/register' },
+      ],
+    },
+    {
+      title: 'Contatti e roadmap',
+      links: [
+        { label: 'Richiedi aggiornamenti', to: '/#contatti' },
+        { label: 'Partnership e attivazioni', to: '/#contatti' },
+        { label: 'Supporto progetto', to: '/#contatti' },
+      ],
+    },
+  ];
+
+  const footerHighlights = [
+    'Marketplace piu ordinato, con ruoli distinti e schede leggibili.',
+    'Spazio beta pensato per far vedere bene prodotto, flussi e affidabilita.',
+    'Design editoriale, ricerca chiara e contatti piu consapevoli.',
+  ];
+
+  return (
+    <footer className="site-footer site-footer--home">
+      <div className="container site-footer__shell">
+        <div className="site-footer__hero">
+          <div className="site-footer__brand">
+            <span className="site-footer__eyebrow">AdFido v1.0.0</span>
+            <strong>Una beta piu solida da mostrare, navigare e far percepire come prodotto vero.</strong>
+            <p>
+              Una chiusura homepage piu ricca, con la stessa logica editoriale dei portali
+              strutturati: blocchi chiari, percorsi leggibili e punti di accesso subito visibili.
+            </p>
+          </div>
+
+          <div className="site-footer__spotlight">
+            <span className="site-footer__spotlight-label">Stato progetto</span>
+            <strong>Beta operativa con focus su responsive, chiarezza e fiducia.</strong>
+            <p>
+              Questa versione resta pensata per demo e allineamento interno, con base gia pronta
+              per le prossime iterazioni.
+            </p>
+            <Link className="site-footer__spotlight-action" to="/#contatti">
+              Richiedi aggiornamenti
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+
+        <div className="site-footer__grid">
+          {footerGroups.map((group) => (
+            <section key={group.title} className="site-footer__column">
+              <h3>{group.title}</h3>
+              <div className="site-footer__links">
+                {group.links.map((link) => (
+                  <Link key={`${group.title}-${link.label}`} to={link.to}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
+
+          <section className="site-footer__column site-footer__column--notes">
+            <h3>Perche questa chiusura funziona meglio</h3>
+            <div className="site-footer__notes">
+              {footerHighlights.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 export function HomePage() {
   const { data } = useHomePayload();
   const { showToast } = useToast();
@@ -710,6 +799,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomeFooter />
     </>
   );
 }
