@@ -38,7 +38,10 @@ export function AppShell() {
     { to: '/', label: 'Home', icon: LayoutGrid },
     { to: '/listings', label: 'Annunci', icon: Search },
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
-    ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
+    ...(session && canManageListings
+      ? [{ to: dashboardHref, label: 'Dashboard', icon: LayoutDashboard }]
+      : []),
+    ...(session && !canManageListings ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
     ...(session ? [{ to: '/account', label: 'Profilo', icon: UserCircle2 }] : []),
     ...(session ? [{ action: 'logout' as const, label: 'Logout', icon: LogOut }] : []),
   ];
