@@ -40,6 +40,7 @@ export function AppShell() {
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
     ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
   ];
+  const navigationClassName = `nav${session ? ' nav--signed' : ' nav--public'}`;
   const dashboardHref = '/subscriber';
   const dashboardLabel = 'Dashboard professionale';
 
@@ -75,7 +76,7 @@ export function AppShell() {
             </span>
           </NavLink>
 
-          <nav className="nav">
+          <nav className={navigationClassName}>
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
