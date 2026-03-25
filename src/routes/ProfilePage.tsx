@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LayoutDashboard, Save, ShieldCheck, UserCircle2 } from 'lucide-react';
+import { FolderSearch2, LayoutDashboard, Save, ShieldCheck, UserCircle2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
@@ -37,37 +37,41 @@ export function ProfilePage() {
     null
   );
   const dashboardHref =
-    session?.user.role === 'breeder' || session?.user.role === 'shelter' ? '/subscriber' : null;
+    session?.user.role === 'admin'
+      ? '/admin'
+      : session?.user.role === 'breeder' || session?.user.role === 'shelter'
+        ? '/subscriber'
+        : null;
   const accountLabel =
-    session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
-      ? 'Canile / Rifugio'
-      : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
-        ? 'Allevatore privato'
-        : session?.user.role === 'admin'
-          ? 'Team AdFido'
+    session?.user.role === 'admin'
+      ? 'CEO / Admin'
+      : session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
+        ? 'Canile / Rifugio'
+        : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
+          ? 'Allevatore privato'
           : 'Utente';
   const profileTitle =
-    session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
-      ? 'Profilo canile / rifugio'
-      : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
-        ? 'Profilo allevatore privato'
-        : session?.user.role === 'admin'
-          ? 'Profilo operativo AdFido'
+    session?.user.role === 'admin'
+      ? 'Profilo amministrativo AdFido'
+      : session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
+        ? 'Profilo canile / rifugio'
+        : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
+          ? 'Profilo allevatore privato'
           : 'Profilo utente';
   const roleFeatures = useMemo<ProfileFeature[]>(() => {
     if (session?.user.role === 'admin') {
       return [
         {
-          title: 'Profilo operativo',
-          body: 'Usa questo spazio per verificare dati account, contatti e accessi della sessione.',
+          title: 'Profilo amministrativo',
+          body: 'Mantieni separati overview direzionale, moderazione annunci e inventory operativo.',
         },
         {
-          title: 'Ambiente demo',
-          body: 'La repo ufficiale V1 resta focalizzata sui flussi pubblici e professionali del prodotto.',
+          title: 'Governance piattaforma',
+          body: 'Monitora KPI, coda review e stato account senza mischiare dettaglio e triage.',
         },
         {
-          title: 'Ruolo separato',
-          body: 'Le estensioni di governance e moderazione restano disponibili come evoluzione successiva.',
+          title: 'Azioni rapide',
+          body: 'Accedi subito alla moderazione annunci e al profilo personale amministrativo.',
         },
       ];
     }
@@ -126,9 +130,19 @@ export function ProfilePage() {
       [
         dashboardHref
           ? {
-              label: 'Apri dashboard operativa',
+              label:
+                session?.user.role === 'admin'
+                  ? 'Apri dashboard amministrativa'
+                  : 'Apri dashboard operativa',
               href: dashboardHref,
               tone: 'secondary' as const,
+            }
+          : null,
+        session?.user.role === 'admin'
+          ? {
+              label: 'Apri moderazione annunci',
+              href: '/admin/inventory',
+              tone: 'ghost' as const,
             }
           : null,
         {
@@ -179,7 +193,7 @@ export function ProfilePage() {
             </div>
             <p>
               Qui gestisci dati account e profilo pubblico. La dashboard resta lo spazio operativo
-              dedicato ad annunci e gestione dei flussi principali del marketplace.
+              dedicato ad annunci, moderazione o controllo del marketplace.
             </p>
             <div className="chip-row">
               <span className="chip">{accountLabel}</span>
@@ -192,7 +206,11 @@ export function ProfilePage() {
                   className={`button dashboard-bridge__cta ${action.tone === 'secondary' ? 'button--secondary' : 'button--ghost'}`}
                   to={action.href}
                 >
-                  <LayoutDashboard size={18} />
+                  {action.href === '/admin/inventory' ? (
+                    <FolderSearch2 size={18} />
+                  ) : (
+                    <LayoutDashboard size={18} />
+                  )}
                   {action.label}
                 </Link>
               ))}

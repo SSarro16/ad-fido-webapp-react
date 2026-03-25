@@ -33,6 +33,12 @@ const ProfessionalDashboardPage = lazy(() =>
     default: module.ProfessionalDashboardPage,
   }))
 );
+const ControlRoomPage = lazy(() =>
+  import('./routes/ControlRoomPage').then((module) => ({ default: module.ControlRoomPage }))
+);
+const AdminInventoryPage = lazy(() =>
+  import('./routes/AdminInventoryPage').then((module) => ({ default: module.AdminInventoryPage }))
+);
 
 function withFallback(element: ReactNode) {
   return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
@@ -69,8 +75,24 @@ export const router = createBrowserRouter([
       {
         path: 'subscriber',
         element: withFallback(
-          <RequireRole allowedRoles={['subscriber', 'breeder', 'shelter']}>
+          <RequireRole allowedRoles={['subscriber', 'breeder', 'shelter', 'admin']}>
             <ProfessionalDashboardPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'admin',
+        element: withFallback(
+          <RequireRole allowedRoles={['admin']}>
+            <ControlRoomPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'admin/inventory',
+        element: withFallback(
+          <RequireRole allowedRoles={['admin']}>
+            <AdminInventoryPage />
           </RequireRole>
         ),
       },

@@ -1,6 +1,7 @@
 import {
   BookOpenText,
   CircleUserRound,
+  FolderSearch2,
   Heart,
   LayoutDashboard,
   LayoutGrid,
@@ -25,23 +26,28 @@ export function AppShell() {
   const { showToast } = useToast();
   const showGlobalLoader =
     navigationState.state !== 'idle' || !initialized || authStatus === 'loading';
-  const canManageListings = session?.user.role === 'breeder' || session?.user.role === 'shelter';
+  const canManageListings =
+    session?.user.role === 'breeder' ||
+    session?.user.role === 'shelter' ||
+    session?.user.role === 'admin';
   const professionalLabel =
-    session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
-      ? 'Canile / Rifugio'
-      : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
-        ? 'Allevatore privato'
-        : session?.user.role === 'admin'
-          ? 'Team AdFido'
-          : 'Area personale';
+    session?.user.role === 'admin'
+      ? 'CEO / Admin'
+      : session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
+        ? 'Canile / Rifugio'
+        : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
+          ? 'Allevatore privato'
+          : 'Area professionale';
   const navigation = [
     { to: '/', label: 'Home', icon: LayoutGrid },
     { to: '/listings', label: 'Annunci', icon: Search },
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
     ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
   ];
-  const dashboardHref = '/subscriber';
-  const dashboardLabel = 'Dashboard professionale';
+  const dashboardHref = session?.user.role === 'admin' ? '/admin' : '/subscriber';
+  const adminInventoryHref = session?.user.role === 'admin' ? '/admin/inventory' : null;
+
+  const dashboardLabel = session?.user.role === 'admin' ? 'Dashboard admin' : 'Dashboard';
 
   return (
     <div className="app-shell">
@@ -99,7 +105,11 @@ export function AppShell() {
               <div>
                 <strong>{session.user.name}</strong>
                 <small>
-                  {session.user.role === 'user' ? 'Account personale' : professionalLabel}
+                  {session.user.role === 'admin'
+                    ? 'Pannello CEO AdFido'
+                    : session.user.role === 'user'
+                      ? 'Account personale'
+                      : professionalLabel}
                 </small>
               </div>
             </div>
@@ -145,6 +155,19 @@ export function AppShell() {
                   </NavLink>
                 ) : null}
 
+                {adminInventoryHref ? (
+                  <NavLink
+                    className={({ isActive }) =>
+                      `account-aside__link${isActive ? ' account-aside__link--active' : ''}`
+                    }
+                    to={adminInventoryHref}
+                    title="Moderazione annunci"
+                  >
+                    <FolderSearch2 size={18} />
+                    <span>Moderazione annunci</span>
+                  </NavLink>
+                ) : null}
+
                 <NavLink
                   className={({ isActive }) =>
                     `account-aside__link${isActive ? ' account-aside__link--active' : ''}`
@@ -165,7 +188,7 @@ export function AppShell() {
                   logout();
                   showToast({
                     title: 'Logout completato',
-                    description: 'La sessione e stata chiusa correttamente.',
+                    description: 'La sessione è stata chiusa correttamente.',
                     tone: 'info',
                   });
                   navigate('/login', {
@@ -188,16 +211,14 @@ export function AppShell() {
             <strong>Annunci per cani con profili curati, contatti seri e moderazione reale.</strong>
             <p>
               Una base digitale pensata per leggere bene ogni scheda, distinguere ruoli e
-              responsabilita tra allevatori privati, canili, rifugi e utenti finali, e far partire
+              responsabilita tra allevatori privati, canili, rifugi e area admin, e far partire
               contatti piu consapevoli.
             </p>
           </div>
 
           <div className="site-footer__meta">
             <a href="/#contatti">Richiedi aggiornamenti progetto</a>
-            <span>Roadmap prodotto e onboarding in evoluzione continua</span>
-            <span>Contatti pubblici definitivi esposti solo prima del go-live operativo</span>
-            <span>Progetto curato da Simone Sarro</span>
+            <span>Powered by Simone Sarro</span>
           </div>
         </div>
       </footer>

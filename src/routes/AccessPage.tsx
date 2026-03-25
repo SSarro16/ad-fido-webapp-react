@@ -36,6 +36,12 @@ const demos = [
     email: 'shelter.demo@adfido.it',
     password: 'DEMO_PASSWORD_REMOVED',
   },
+  {
+    title: 'CEO / Admin',
+    description: 'Area gestionale completa con analytics, moderazione e approvazione annunci.',
+    email: 'adfidoadministration@adfido.it',
+    password: 'DEMO_PASSWORD_REMOVED',
+  },
 ] as const;
 
 export function AccessPage() {
@@ -67,7 +73,9 @@ export function AccessPage() {
       });
       const session = useAuthStore.getState().session;
       navigate(
-        session?.user.role === 'breeder' || session?.user.role === 'shelter'
+        session?.user.role === 'admin'
+          ? '/admin'
+          : session?.user.role === 'breeder' || session?.user.role === 'shelter'
             ? '/subscriber'
             : (state?.from ?? '/account')
       );
@@ -83,7 +91,8 @@ export function AccessPage() {
           <span className="auth-stage__eyebrow">Accesso</span>
           <h1>Accedi al tuo account AdFido</h1>
           <p>
-            Utenti, allevatori privati e canili/rifugi hanno accessi demo rapidi separati.
+            Utenti, allevatori privati, canili/rifugi e CEO/Admin hanno accessi demo rapidi
+            separati.
           </p>
           <div className="auth-stage__highlights">
             <div className="auth-stage__highlight">
@@ -92,7 +101,7 @@ export function AccessPage() {
             </div>
             <div className="auth-stage__highlight">
               <ShieldCheck size={18} />
-              <span>Area professionale distinta tra allevatori privati e canili/rifugi.</span>
+              <span>Area amministrativa separata dai profili professionali.</span>
             </div>
           </div>
         </div>
@@ -136,7 +145,7 @@ export function AccessPage() {
             <div className="auth-guidance__header">
               <strong>Accessi demo rapidi</strong>
               <p>
-                Seleziona uno dei profili demo per compilare automaticamente le credenziali corrette.
+                Seleziona uno dei 4 profili per compilare automaticamente le credenziali corrette.
               </p>
             </div>
             <div className="auth-card-grid auth-card-grid--demo">
