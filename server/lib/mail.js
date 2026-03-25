@@ -1,24 +1,16 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const MAIL_TIMEOUT_MS = 12000;
-
-function readSmtpConfig() {
-  const host = process.env.SMTP_HOST?.trim();
-  const port = Number(process.env.SMTP_PORT ?? 587);
-  const user = process.env.SMTP_USER?.trim();
-  const pass = process.env.SMTP_PASS?.trim();
-  const from = process.env.FEEDBACK_MAIL_FROM?.trim() || user;
+function readMailConfig() {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.FEEDBACK_MAIL_FROM?.trim() || 'onboarding@resend.dev';
   const to = process.env.FEEDBACK_MAIL_TO?.trim() || 'simone.sarro@outlook.it';
 
-  if (!host || !port || !user || !pass || !from || !to) {
+  if (!apiKey || !from || !to) {
     return null;
   }
 
   return {
-    host,
-    port,
-    secure: String(process.env.SMTP_SECURE ?? 'false') === 'true',
-    auth: { user, pass },
+    apiKey,
     from,
     to,
   };
@@ -38,10 +30,10 @@ function buildFeedbackMailBody({ name, email, message, createdAt }) {
 }
 
 export async function sendFeedbackMail(feedback) {
-  const smtpConfig = readSmtpConfig();
+  const mailConfig = readMailConfig();
 
-  if (!smtpConfig) {
-    console.info('[feedback-mail] smtp disabled or incomplete configuration');
+  if (!mailConfig) {
+    console.info('[feedback-mail] resend disabled or incomplete configuration');
     return {
       delivered: false,
       channel: 'disabled',
@@ -49,46 +41,35 @@ export async function sendFeedbackMail(feedback) {
     };
   }
 
-  console.info('[feedback-mail] smtp configuration detected', {
-    host: smtpConfig.host,
-    port: smtpConfig.port,
-    secure: smtpConfig.secure,
-    from: smtpConfig.from,
-    to: smtpConfig.to,
+  console.info('[feedback-mail] resend configuration detected', {
+    from: mailConfig.from,
+    to: mailConfig.to,
     hasReplyTo: Boolean(feedback.email),
   });
 
-  const transporter = nodemailer.createTransport({
-    host: smtpConfig.host,
-    port: smtpConfig.port,
-    secure: smtpConfig.secure,
-    auth: smtpConfig.auth,
-    connectionTimeout: MAIL_TIMEOUT_MS,
-    greetingTimeout: MAIL_TIMEOUT_MS,
-    socketTimeout: MAIL_TIMEOUT_MS,
+  const resend = new Resend(mailConfig.apiKey);
+  const result = await resend.emails.send({
+    from: mailConfig.from,
+    to: [mailConfig.to],
+    replyTo: feedback.email || undefined,
+    subject: `Feedback AdFido - ${feedback.name || 'Utente sito'}`,
+    text: buildFeedbackMailBody(feedback),
   });
 
-  await Promise.race([
-    transporter.sendMail({
-      from: smtpConfig.from,
-      to: smtpConfig.to,
-      replyTo: feedback.email || undefined,
-      subject: `Feedback AdFido - ${feedback.name || 'Utente sito'}`,
-      text: buildFeedbackMailBody(feedback),
-    }),
-    new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('SMTP delivery timeout exceeded.')), MAIL_TIMEOUT_MS);
-    }),
-  ]);
+  if (result.error) {
+    throw new Error(result.error.message || 'Resend delivery failed.');
+  }
 
-  console.info('[feedback-mail] smtp delivery completed', {
-    to: smtpConfig.to,
+  console.info('[feedback-mail] resend delivery completed', {
+    to: mailConfig.to,
     replyTo: feedback.email || null,
+    emailId: result.data?.id ?? null,
   });
 
   return {
     delivered: true,
-    channel: 'smtp',
-    mailbox: smtpConfig.to,
+    channel: 'resend',
+    mailbox: mailConfig.to,
+    providerId: result.data?.id ?? null,
   };
 }
