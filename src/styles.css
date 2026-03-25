@@ -120,9 +120,12 @@ img {
 .brand strong {
   display: block;
   font-size: 1.1rem;
+  line-height: 1.15;
 }
 
 .brand > span:last-child {
+  display: grid;
+  gap: 0.12rem;
   min-width: 0;
 }
 
@@ -153,6 +156,7 @@ img {
   justify-content: center;
   gap: 0.5rem;
   flex: 1 1 24rem;
+  min-width: 0;
   padding: 0.4rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.58);
@@ -384,7 +388,7 @@ img {
 }
 
 .hero__inner {
-  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
   gap: 2.2rem;
 }
 
@@ -4328,6 +4332,21 @@ img {
 
   .hero {
     padding-top: 3.2rem;
+    padding-bottom: 2.8rem;
+  }
+
+  .hero__inner {
+    gap: 1.5rem;
+  }
+
+  .hero__copy,
+  .hero__panel {
+    padding: 2rem;
+  }
+
+  .hero__copy h1 {
+    max-width: 13ch;
+    font-size: clamp(2.2rem, 4.7vw, 3.8rem);
   }
 
   .editorial-showcase {
@@ -4414,6 +4433,57 @@ img {
   }
 }
 
+@media (max-width: 980px) {
+  .home-chooser__grid,
+  .home-trustband__grid,
+  .home-professional__showcase {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-trustband,
+  .home-professional__feature,
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-professional__feature {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .home-professional__feature-copy,
+  .home-professional__showcase,
+  .contact-form-panel,
+  .contact-stack {
+    gap: 0.85rem;
+  }
+
+  .home-professional__feature-copy h2 {
+    max-width: 14ch;
+    font-size: clamp(1.95rem, 5vw, 3.1rem);
+  }
+
+  .home-professional__type-card {
+    min-height: 10.5rem;
+  }
+
+  .contact-form-panel__status {
+    gap: 0.75rem;
+  }
+
+  .listing-grid {
+    gap: 1rem;
+  }
+
+  .editorial-stage__card {
+    min-height: 24rem;
+  }
+
+  .editorial-stage__card--center {
+    min-height: 26rem;
+  }
+}
+
 @media (max-width: 860px) {
   .topbar,
   .filters-panel,
@@ -4433,6 +4503,14 @@ img {
 
   .brand {
     width: 100%;
+  }
+
+  .brand strong {
+    font-size: 1.02rem;
+  }
+
+  .brand small {
+    max-width: 36ch;
   }
 
   .site-footer__inner,
@@ -4466,9 +4544,9 @@ img {
 
   .nav__link {
     width: 100%;
-    min-height: 3.2rem;
-    padding: 0.8rem 0.9rem;
-    font-size: 0.95rem;
+    min-height: 3rem;
+    padding: 0.75rem 0.85rem;
+    font-size: 0.93rem;
   }
 
   .topbar__actions {
@@ -4492,6 +4570,10 @@ img {
 
   .hero__copy {
     padding: 1.6rem;
+  }
+
+  .hero__panel {
+    padding: 1.25rem;
   }
 
   .home-trustband__copy {
@@ -4685,6 +4767,59 @@ img {
   }
 }
 
+@media (min-width: 761px) and (max-width: 860px) {
+  .topbar__inner {
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .brand {
+    width: auto;
+    max-width: 100%;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex: 1 1 100%;
+    order: 3;
+    gap: 0.45rem;
+    padding: 0.45rem;
+    border-radius: 1rem;
+  }
+
+  .nav__link {
+    width: auto;
+    min-height: 2.85rem;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .topbar__actions {
+    width: auto;
+    margin-left: auto;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .topbar__actions .button,
+  .topbar__actions .topbar__cta {
+    width: auto;
+    min-height: 2.85rem;
+  }
+
+  .topbar__user {
+    width: auto;
+    align-items: flex-end;
+  }
+
+  .topbar__user--card {
+    width: auto;
+    max-width: min(100%, 18rem);
+  }
+}
+
 @media (max-width: 640px) {
   .container {
     width: min(calc(100% - 1rem), 1180px);
@@ -4696,6 +4831,10 @@ img {
 
   .brand {
     gap: 0.75rem;
+  }
+
+  .brand strong {
+    font-size: 0.98rem;
   }
 
   .brand small {
@@ -4740,8 +4879,19 @@ img {
     padding: 1rem;
   }
 
+  .hero__copy h1 {
+    max-width: 14ch;
+    font-size: clamp(2rem, 9vw, 2.8rem);
+    line-height: 1;
+  }
+
+  .hero__stats div {
+    flex-basis: calc(50% - 0.5rem);
+    min-width: 0;
+  }
+
   .listing-card {
-    grid-template-rows: 220px minmax(0, 1fr);
+    grid-template-rows: 190px minmax(0, 1fr);
   }
 
   .editorial-showcase__media img {
@@ -4754,6 +4904,11 @@ img {
 
   .editorial-stage__details {
     padding: 1rem;
+  }
+
+  .editorial-stage__card,
+  .editorial-stage__card--center {
+    min-height: 21rem;
   }
 
   .editorial-showcase__content h2,
@@ -4819,6 +4974,10 @@ img {
 }
 
 @media (max-width: 480px) {
+  .brand strong {
+    font-size: 0.94rem;
+  }
+
   .brand small {
     display: none;
   }
