@@ -70,7 +70,7 @@ export function AppShell() {
               <PawPrint size={18} strokeWidth={2.2} />
             </span>
             <span>
-              <strong>AdFido</strong>
+              <strong>AdFido v1.0.0</strong>
               <small>Trova il cane giusto, nel contesto giusto.</small>
             </span>
           </NavLink>

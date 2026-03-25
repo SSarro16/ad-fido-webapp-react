@@ -45,7 +45,6 @@ export function SearchHero({ stats, frequentSearches }: SearchHeroProps) {
     <section className="hero hero--marketplace">
       <div className="container hero__inner">
         <Reveal className="hero__copy" y={36}>
-          <span className="hero__version">AdFido v1.0.0</span>
           <span className="hero__eyebrow">La ricerca giusta per l affido giusto</span>
           <h1>Trova cani, canili verificati e annunci affidabili in un unico posto.</h1>
           <p>
