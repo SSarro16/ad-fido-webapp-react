@@ -36,12 +36,20 @@ type StageCard = {
 };
 
 const contactDraftKey = 'adfido-contact-drafts';
+const feedbackDraftKey = 'adfido-feedback-drafts';
 
 type ContactDraft = {
   name: string;
   email: string;
   topic: string;
   audience: string;
+  message: string;
+  createdAt: string;
+};
+
+type FeedbackDraft = {
+  name: string;
+  email: string;
   message: string;
   createdAt: string;
 };
@@ -186,7 +194,31 @@ function EditorialCarousel({ items, title, eyebrow, tone = 'default' }: Editoria
   );
 }
 
-function HomeFooter() {
+type HomeFooterProps = {
+  feedbackForm: {
+    name: string;
+    email: string;
+    message: string;
+  };
+  feedbackDrafts: FeedbackDraft[];
+  feedbackError: string;
+  feedbackSuccess: string;
+  isSavingFeedback: boolean;
+  onFeedbackChange: (field: 'name' | 'email' | 'message', value: string) => void;
+  onFeedbackSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onFeedbackMailto: () => void;
+};
+
+function HomeFooter({
+  feedbackForm,
+  feedbackDrafts,
+  feedbackError,
+  feedbackSuccess,
+  isSavingFeedback,
+  onFeedbackChange,
+  onFeedbackSubmit,
+  onFeedbackMailto,
+}: HomeFooterProps) {
   const footerGroups = [
     {
       title: 'Esplora AdFido',
@@ -207,7 +239,7 @@ function HomeFooter() {
     {
       title: 'Contatti e roadmap',
       links: [
-        { label: 'Richiedi aggiornamenti', to: '/#contatti' },
+        { label: 'Manda feedback', to: '/#footer-feedback' },
         { label: 'Partnership e attivazioni', to: '/#contatti' },
         { label: 'Supporto progetto', to: '/#contatti' },
       ],
@@ -226,24 +258,28 @@ function HomeFooter() {
         <div className="site-footer__hero">
           <div className="site-footer__brand">
             <span className="site-footer__eyebrow">AdFido v1.0.0</span>
-            <strong>Una beta piu solida da mostrare, navigare e far percepire come prodotto vero.</strong>
+            <strong>Una chiusura piu calda, piu credibile e piu utile da far vedere a chi conta.</strong>
             <p>
-              Una chiusura homepage piu ricca, con la stessa logica editoriale dei portali
-              strutturati: blocchi chiari, percorsi leggibili e punti di accesso subito visibili.
+              Il footer non deve sembrare un riempitivo: qui chiudiamo la homepage con tono piu
+              editoriale, percorsi chiari e un punto diretto per lasciare osservazioni vere sul sito.
             </p>
           </div>
 
           <div className="site-footer__spotlight">
-            <span className="site-footer__spotlight-label">Stato progetto</span>
-            <strong>Beta operativa con focus su responsive, chiarezza e fiducia.</strong>
+            <span className="site-footer__spotlight-label">Manda feedback</span>
+            <strong>Segnala cosa funziona, cosa stona e cosa miglioreresti nella beta.</strong>
             <p>
-              Questa versione resta pensata per demo e allineamento interno, con base gia pronta
-              per le prossime iterazioni.
+              I commenti possono restare salvati in locale sul sito oppure essere inviati alla mail
+              di riferimento, cosi il confronto resta semplice e immediato.
             </p>
-            <Link className="site-footer__spotlight-action" to="/#contatti">
-              Richiedi aggiornamenti
+            <div className="site-footer__spotlight-meta">
+              <span>{feedbackDrafts.length} note salvate in questo browser</span>
+              <span>simone.sarro@outlook.it</span>
+            </div>
+            <a className="site-footer__spotlight-action" href="#footer-feedback">
+              Apri area feedback
               <ArrowRight size={18} />
-            </Link>
+            </a>
           </div>
         </div>
 
@@ -262,7 +298,7 @@ function HomeFooter() {
           ))}
 
           <section className="site-footer__column site-footer__column--notes">
-            <h3>Perche questa chiusura funziona meglio</h3>
+            <h3>Perche questo footer funziona meglio</h3>
             <div className="site-footer__notes">
               {footerHighlights.map((item) => (
                 <span key={item}>{item}</span>
@@ -270,6 +306,79 @@ function HomeFooter() {
             </div>
           </section>
         </div>
+
+        <section className="site-footer__feedback" id="footer-feedback">
+          <div className="site-footer__feedback-intro">
+            <span className="site-footer__eyebrow">Note / Commenti</span>
+            <h3>Lascia un feedback diretto sul sito</h3>
+            <p>
+              Se noti un problema, una scelta da rivedere o un miglioramento utile, puoi scriverlo
+              qui. In questa beta il messaggio puo essere salvato nel browser e preparato anche per
+              l invio via email.
+            </p>
+          </div>
+
+          <form className="site-footer__feedback-form" onSubmit={onFeedbackSubmit}>
+            {feedbackSuccess ? (
+              <div className="auth-feedback auth-feedback--info">{feedbackSuccess}</div>
+            ) : null}
+            {feedbackError ? (
+              <div className="auth-feedback auth-feedback--error">{feedbackError}</div>
+            ) : null}
+
+            <div className="site-footer__feedback-grid">
+              <label>
+                Nome
+                <input
+                  value={feedbackForm.name}
+                  onChange={(event) => onFeedbackChange('name', event.target.value)}
+                  placeholder="Come ti chiami"
+                />
+              </label>
+
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={feedbackForm.email}
+                  onChange={(event) => onFeedbackChange('email', event.target.value)}
+                  placeholder="La tua email"
+                />
+              </label>
+            </div>
+
+            <label>
+              Note / commenti
+              <textarea
+                value={feedbackForm.message}
+                onChange={(event) => onFeedbackChange('message', event.target.value)}
+                placeholder="Scrivi qui accorgimenti, problemi, miglioramenti o impressioni sul sito."
+                rows={5}
+              />
+            </label>
+
+            <div className="site-footer__feedback-actions">
+              <p>
+                `Salva feedback` lo lascia disponibile in questo browser. `Invia via email` apre il
+                client di posta verso `simone.sarro@outlook.it`.
+              </p>
+
+              <div className="site-footer__feedback-buttons">
+                <button className="button button--ghost" type="submit" disabled={isSavingFeedback}>
+                  {isSavingFeedback ? 'Salvataggio...' : 'Salva feedback'}
+                </button>
+                <button
+                  className="button button--primary"
+                  type="button"
+                  onClick={onFeedbackMailto}
+                >
+                  <Send size={18} />
+                  Invia via email
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
       </div>
     </footer>
   );
@@ -291,6 +400,15 @@ export function HomePage() {
   const [contactSuccess, setContactSuccess] = useState('');
   const [isSavingContact, setIsSavingContact] = useState(false);
   const [contactDrafts, setContactDrafts] = useState<ContactDraft[]>([]);
+  const [feedbackForm, setFeedbackForm] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+  const [feedbackDrafts, setFeedbackDrafts] = useState<FeedbackDraft[]>([]);
+  const [feedbackError, setFeedbackError] = useState('');
+  const [feedbackSuccess, setFeedbackSuccess] = useState('');
+  const [isSavingFeedback, setIsSavingFeedback] = useState(false);
 
   const pathways = [
     {
@@ -353,6 +471,17 @@ export function HomePage() {
       setContactDrafts(Array.isArray(storedDrafts) ? storedDrafts : []);
     } catch {
       setContactDrafts([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const storedFeedback = JSON.parse(
+        window.localStorage.getItem(feedbackDraftKey) ?? '[]'
+      ) as FeedbackDraft[];
+      setFeedbackDrafts(Array.isArray(storedFeedback) ? storedFeedback : []);
+    } catch {
+      setFeedbackDrafts([]);
     }
   }, []);
 
@@ -453,6 +582,96 @@ export function HomePage() {
     } finally {
       setIsSavingContact(false);
     }
+  };
+
+  const handleFeedbackSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedMessage = feedbackForm.message.trim();
+    const trimmedName = feedbackForm.name.trim();
+    const trimmedEmail = feedbackForm.email.trim();
+
+    if (trimmedMessage.length < 8) {
+      setFeedbackSuccess('');
+      setFeedbackError('Scrivi un feedback un po piu chiaro prima di salvarlo.');
+      showToast({
+        title: 'Feedback troppo breve',
+        description: 'Aggiungi un po piu contesto prima di salvare.',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setFeedbackSuccess('');
+      setFeedbackError('Se inserisci l email, deve essere valida.');
+      showToast({
+        title: 'Email non valida',
+        description: 'Controlla l indirizzo email del feedback.',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    setFeedbackError('');
+    setIsSavingFeedback(true);
+
+    const draft: FeedbackDraft = {
+      name: trimmedName,
+      email: trimmedEmail,
+      message: trimmedMessage,
+      createdAt: new Date().toISOString(),
+    };
+
+    let currentDrafts: FeedbackDraft[] = [];
+
+    try {
+      currentDrafts = JSON.parse(
+        window.localStorage.getItem(feedbackDraftKey) ?? '[]'
+      ) as FeedbackDraft[];
+    } catch {
+      currentDrafts = [];
+    }
+
+    const nextDrafts = [draft, ...currentDrafts].slice(0, 20);
+
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 220));
+      window.localStorage.setItem(feedbackDraftKey, JSON.stringify(nextDrafts));
+      setFeedbackDrafts(nextDrafts);
+      setFeedbackSuccess('Feedback salvato nel browser. Puoi tenerlo qui o inviarlo via email.');
+      setFeedbackForm({ name: '', email: '', message: '' });
+      showToast({
+        title: 'Feedback salvato',
+        description: 'La nota e stata salvata in locale su questo browser.',
+        tone: 'success',
+      });
+    } catch {
+      setFeedbackSuccess('');
+      setFeedbackError('Non siamo riusciti a salvare il feedback in locale.');
+      showToast({
+        title: 'Salvataggio non riuscito',
+        description: 'Controlla privacy mode o spazio disponibile del browser.',
+        tone: 'error',
+      });
+    } finally {
+      setIsSavingFeedback(false);
+    }
+  };
+
+  const handleFeedbackMailto = () => {
+    const subject = encodeURIComponent('Feedback sito AdFido beta');
+    const body = encodeURIComponent(
+      [
+        `Nome: ${feedbackForm.name || 'Non specificato'}`,
+        `Email: ${feedbackForm.email || 'Non specificata'}`,
+        '',
+        'Feedback:',
+        feedbackForm.message || '',
+      ].join('\n')
+    );
+
+    window.location.href = `mailto:simone.sarro@outlook.it?subject=${subject}&body=${body}`;
   };
 
   if (!data) {
@@ -800,7 +1019,20 @@ export function HomePage() {
         </div>
       </section>
 
-      <HomeFooter />
+      <HomeFooter
+        feedbackForm={feedbackForm}
+        feedbackDrafts={feedbackDrafts}
+        feedbackError={feedbackError}
+        feedbackSuccess={feedbackSuccess}
+        isSavingFeedback={isSavingFeedback}
+        onFeedbackChange={(field, value) => {
+          setFeedbackError('');
+          setFeedbackSuccess('');
+          setFeedbackForm((current) => ({ ...current, [field]: value }));
+        }}
+        onFeedbackSubmit={handleFeedbackSubmit}
+        onFeedbackMailto={handleFeedbackMailto}
+      />
     </>
   );
 }
