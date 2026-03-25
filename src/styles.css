@@ -4972,17 +4972,40 @@ img {
 }
 
 @media (max-width: 480px) {
+  .topbar__inner {
+    gap: 0.65rem;
+    padding: 0.7rem 0 0.8rem;
+  }
+
+  .brand {
+    gap: 0.65rem;
+  }
+
   .brand strong {
-    font-size: 0.94rem;
+    font-size: 0.9rem;
   }
 
   .brand small {
     display: none;
   }
 
+  .brand__mark {
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 0.8rem;
+  }
+
+  .nav {
+    gap: 0.32rem;
+    padding: 0.32rem;
+    border-radius: 0.9rem;
+  }
+
   .nav__link {
+    min-height: 2.55rem;
     justify-content: flex-start;
-    padding-inline: 0.82rem;
+    padding: 0.58rem 0.74rem;
+    font-size: 0.86rem;
   }
 
   .nav--public {
@@ -4994,5 +5017,14 @@ img {
   .nav--public .nav__link {
     width: fit-content;
     max-width: 100%;
+  }
+
+  .topbar__actions {
+    gap: 0.5rem;
+  }
+
+  .topbar__actions .button,
+  .topbar__actions .topbar__cta {
+    min-height: 3rem;
   }
 }
