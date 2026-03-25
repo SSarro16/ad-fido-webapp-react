@@ -21,7 +21,6 @@ const seededUsers = [
     emailVerified: true,
     organizationName: '',
     createdAt: '2026-03-10T08:00:00.000Z',
-    passwordHash: 'PASSWORD_HASH_REMOVED',
   },
   {
     id: 'breeder-seed',
@@ -33,7 +32,6 @@ const seededUsers = [
     emailVerified: true,
     organizationName: 'Allevamento Colle Verde',
     createdAt: '2026-03-11T09:30:00.000Z',
-    passwordHash: 'PASSWORD_HASH_REMOVED',
   },
   {
     id: 'shelter-seed',
@@ -45,7 +43,6 @@ const seededUsers = [
     emailVerified: true,
     organizationName: 'Canile Sanitario di San Giorgio Jonico',
     createdAt: '2026-03-12T11:15:00.000Z',
-    passwordHash: 'PASSWORD_HASH_REMOVED',
   },
   {
     id: 'admin-seed',
@@ -57,7 +54,6 @@ const seededUsers = [
     emailVerified: true,
     organizationName: undefined,
     createdAt: '2026-03-09T07:45:00.000Z',
-    passwordHash: 'PASSWORD_HASH_REMOVED',
   },
 ];
 

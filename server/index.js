@@ -878,24 +878,6 @@ app.get('/api/admin/overview', async (request, response) => {
 
   response.json({
     overview: calculateAdminOverview(users, listings),
-    credentials: {
-      user: {
-        email: 'user@adfido.it',
-        password: 'DEMO_PASSWORD_REMOVED',
-      },
-      admin: {
-        email: 'adfidoadministration@adfido.it',
-        password: 'DEMO_PASSWORD_REMOVED',
-      },
-      breeder: {
-        email: 'breeder.demo@adfido.it',
-        password: 'DEMO_PASSWORD_REMOVED',
-      },
-      shelter: {
-        email: 'shelter.demo@adfido.it',
-        password: 'DEMO_PASSWORD_REMOVED',
-      },
-    },
   });
 });
 
@@ -995,3 +977,5 @@ await bootstrapFirestore();
 app.listen(port, () => {
   console.log(`AdFido backend attivo su http://localhost:${port}`);
 });
+
+

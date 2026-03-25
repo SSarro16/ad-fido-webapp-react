@@ -19,22 +19,18 @@ type Values = z.infer<typeof schema>;
 const demos = [
   {
     title: 'Utente normale',
-    description: 'Può salvare gli annunci che gli interessano e gestire i preferiti.',
+    description: 'Puo salvare gli annunci che gli interessano e gestire i preferiti.',
     email: 'user@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
   },
   {
     title: 'Allevatore privato',
-    description: 'Può creare e modificare annunci, con massimo 3 annunci per account.',
+    description: 'Puo creare e modificare annunci, con massimo 3 annunci per account.',
     email: 'breeder.demo@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
   },
   {
     title: 'Canile / Rifugio',
-    description:
-      'Profilo dedicato ai canili, con possibilità di pubblicare tutti gli annunci necessari.',
+    description: 'Profilo dedicato ai canili, con possibilita di pubblicare tutti gli annunci necessari.',
     email: 'shelter.demo@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
   },
 ] as const;
 
@@ -68,8 +64,8 @@ export function AccessPage() {
       const session = useAuthStore.getState().session;
       navigate(
         session?.user.role === 'breeder' || session?.user.role === 'shelter'
-            ? '/subscriber'
-            : (state?.from ?? '/account')
+          ? '/subscriber'
+          : (state?.from ?? '/account')
       );
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'Login non riuscito');
@@ -82,9 +78,7 @@ export function AccessPage() {
         <div className="auth-stage__copy">
           <span className="auth-stage__eyebrow">Accesso</span>
           <h1>Accedi al tuo account AdFido</h1>
-          <p>
-            Utenti, allevatori privati e canili/rifugi hanno accessi demo rapidi separati.
-          </p>
+          <p>Utenti, allevatori privati e canili/rifugi accedono da un unico punto di ingresso.</p>
           <div className="auth-stage__highlights">
             <div className="auth-stage__highlight">
               <UserCircle2 size={18} />
@@ -136,18 +130,18 @@ export function AccessPage() {
             <div className="auth-guidance__header">
               <strong>Accessi demo rapidi</strong>
               <p>
-                Seleziona uno dei profili demo per compilare automaticamente le credenziali corrette.
+                Seleziona un profilo per compilare automaticamente l email di test, senza esporre
+                password nel client.
               </p>
             </div>
             <div className="auth-card-grid auth-card-grid--demo">
-              {demos.map(({ title, description, email, password }) => (
+              {demos.map(({ title, description, email }) => (
                 <button
                   key={email}
                   type="button"
                   className="panel auth-demo-card"
                   onClick={() => {
                     setValue('email', email);
-                    setValue('password', password);
                   }}
                 >
                   <strong>{title}</strong>

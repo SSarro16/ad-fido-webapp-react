@@ -4,7 +4,7 @@ import { getUserByEmail, upsertUser } from '../lib/user-store.js';
 const demoAccounts = [
   {
     email: 'user@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
+    passwordEnvKey: 'DEMO_USER_PASSWORD',
     displayName: 'Utente Demo',
     role: 'user',
     phone: '+39 333 410 2201',
@@ -12,7 +12,7 @@ const demoAccounts = [
   },
   {
     email: 'breeder.demo@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
+    passwordEnvKey: 'DEMO_BREEDER_PASSWORD',
     displayName: 'Allevatore Privato Demo',
     role: 'breeder',
     phone: '+39 333 410 2202',
@@ -20,7 +20,7 @@ const demoAccounts = [
   },
   {
     email: 'shelter.demo@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
+    passwordEnvKey: 'DEMO_SHELTER_PASSWORD',
     displayName: 'Canile Sanitario di San Giorgio Jonico',
     role: 'shelter',
     phone: '+39 333 410 2204',
@@ -28,7 +28,7 @@ const demoAccounts = [
   },
   {
     email: 'adfidoadministration@adfido.it',
-    password: 'DEMO_PASSWORD_REMOVED',
+    passwordEnvKey: 'DEMO_ADMIN_PASSWORD',
     displayName: 'CEO AdFido',
     role: 'admin',
     phone: '+39 333 410 2203',
@@ -36,12 +36,26 @@ const demoAccounts = [
   },
 ];
 
+function resolvePassword(account) {
+  const password = process.env[account.passwordEnvKey];
+
+  if (!password) {
+    throw new Error(
+      `Missing ${account.passwordEnvKey}. Demo passwords must be injected through environment variables.`
+    );
+  }
+
+  return password;
+}
+
 async function ensureAuthUser(account) {
+  const password = resolvePassword(account);
+
   try {
     const existingUser = await firebaseAdminAuth.getUserByEmail(account.email);
     const updatedUser = await firebaseAdminAuth.updateUser(existingUser.uid, {
       email: account.email,
-      password: account.password,
+      password,
       displayName: account.displayName,
       emailVerified: true,
       disabled: false,
@@ -55,7 +69,7 @@ async function ensureAuthUser(account) {
 
     const createdUser = await firebaseAdminAuth.createUser({
       email: account.email,
-      password: account.password,
+      password,
       displayName: account.displayName,
       emailVerified: true,
       disabled: false,

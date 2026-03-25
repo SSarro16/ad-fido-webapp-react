@@ -44,6 +44,7 @@ Create `.env` from `.env.example`.
 - `VITE_FIREBASE_*` configures the Firebase Web SDK in the frontend
 - `FIREBASE_SERVICE_ACCOUNT_PATH` or `FIREBASE_SERVICE_ACCOUNT_JSON` configures Firebase Admin on the backend
 - `FIREBASE_PROJECT_ID` and `FIREBASE_STORAGE_BUCKET` help the backend target the correct Firebase project
+- `DEMO_*_PASSWORD` variables are only needed when running `npm run seed:demo-auth`
 
 ## Deploy On Render
 
@@ -76,27 +77,13 @@ Recommended setup:
 6. After the first deploy, open the Render URL and verify:
    - homepage loads
    - `GET /api/health` returns `ok: true`
-   - login works with the demo credentials below
+   - login and registration flows work with your configured accounts
 
 Important Render note:
 
 - Firestore and Firebase Storage replace the previous JSON and local-upload persistence layers
 - `AUTH_JWT_SECRET` is generated automatically by `render.yaml`, but you can replace it with your own secret in the Render dashboard
 - do not commit Firebase service account JSON files; keep them local or inject them through Render secrets
-
-## Demo access
-
-- `user@adfido.it`
-- `breeder.demo@adfido.it`
-- `shelter.demo@adfido.it`
-- `adfidoadministration@adfido.it`
-
-Demo passwords:
-
-- user: `DEMO_PASSWORD_REMOVED`
-- admin: `DEMO_PASSWORD_REMOVED`
-- breeder: `DEMO_PASSWORD_REMOVED`
-- shelter: `DEMO_PASSWORD_REMOVED`
 
 ## Auth backend
 
