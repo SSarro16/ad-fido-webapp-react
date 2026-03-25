@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { articleItems } from '../features/articles/articles.data';
 import { useHomePayload } from '../features/marketplace/marketplace.queries';
 import { useToast } from '../features/toasts/useToast';
+import { env } from '../services/env';
 import type { Article } from '../types/marketplace';
 import { ListingCard } from '../ui/ListingCard';
 import { SearchHero } from '../ui/SearchHero';
@@ -636,24 +637,56 @@ export function HomePage() {
     const nextDrafts = [draft, ...currentDrafts].slice(0, 20);
 
     try {
+      const response = await fetch(`${env.apiBaseUrl}/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+          message: trimmedMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Feedback API failed');
+      }
+
       await new Promise((resolve) => window.setTimeout(resolve, 220));
       window.localStorage.setItem(feedbackDraftKey, JSON.stringify(nextDrafts));
       setFeedbackDrafts(nextDrafts);
-      setFeedbackSuccess('Feedback salvato nel browser. Puoi tenerlo qui o inviarlo via email.');
+      setFeedbackSuccess(
+        'Feedback salvato su AdFido e anche in locale nel browser. Puoi comunque inviarlo via email se preferisci.'
+      );
       setFeedbackForm({ name: '', email: '', message: '' });
       showToast({
         title: 'Feedback salvato',
-        description: 'La nota e stata salvata in locale su questo browser.',
+        description: 'La nota e stata archiviata su AdFido e salvata anche in locale.',
         tone: 'success',
       });
     } catch {
-      setFeedbackSuccess('');
-      setFeedbackError('Non siamo riusciti a salvare il feedback in locale.');
-      showToast({
-        title: 'Salvataggio non riuscito',
-        description: 'Controlla privacy mode o spazio disponibile del browser.',
-        tone: 'error',
-      });
+      try {
+        await new Promise((resolve) => window.setTimeout(resolve, 220));
+        window.localStorage.setItem(feedbackDraftKey, JSON.stringify(nextDrafts));
+        setFeedbackDrafts(nextDrafts);
+        setFeedbackSuccess(
+          'Feedback salvato solo in locale nel browser. Se vuoi mandarlo subito, usa il pulsante email.'
+        );
+        showToast({
+          title: 'Feedback salvato in locale',
+          description: 'Il backend non ha risposto, ma la nota resta disponibile su questo browser.',
+          tone: 'info',
+        });
+      } catch {
+        setFeedbackSuccess('');
+        setFeedbackError('Non siamo riusciti a salvare il feedback ne online ne in locale.');
+        showToast({
+          title: 'Salvataggio non riuscito',
+          description: 'Controlla privacy mode o disponibilita del backend.',
+          tone: 'error',
+        });
+      }
     } finally {
       setIsSavingFeedback(false);
     }

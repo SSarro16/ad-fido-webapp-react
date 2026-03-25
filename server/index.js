@@ -21,6 +21,7 @@ import {
   readManagedListings,
   updateManagedListingDocument,
 } from './lib/listing-store.js';
+import { createFeedbackEntry, readFeedbackEntries } from './lib/feedback-store.js';
 import { createImageUploadMiddleware, uploadImagesToStorage } from './lib/storage.js';
 import { validateManagedListing } from './lib/listing-validation.js';
 import {
@@ -637,6 +638,37 @@ app.post('/api/marketplace/listings/:listingId/contact-click', async (request, r
   response.status(204).send();
 });
 
+app.post('/api/feedback', async (request, response) => {
+  const name = String(request.body?.name ?? '').trim();
+  const email = String(request.body?.email ?? '').trim();
+  const message = String(request.body?.message ?? '').trim();
+
+  if (message.length < 8) {
+    response.status(400).json({ message: 'Il feedback deve contenere almeno 8 caratteri.' });
+    return;
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    response.status(400).json({ message: 'L email inserita non e valida.' });
+    return;
+  }
+
+  const entry = await createFeedbackEntry({
+    id: `feedback-${randomUUID()}`,
+    name,
+    email,
+    message,
+    source: 'website',
+    createdAt: new Date().toISOString(),
+  });
+
+  response.status(201).json({
+    feedback: entry,
+    deliveredTo: 'Firestore',
+    mailbox: 'simone.sarro@outlook.it',
+  });
+});
+
 app.post('/api/uploads/images', async (request, response) => {
   const auth = await requireSeller(request, response);
 
@@ -902,6 +934,20 @@ app.get('/api/admin/listings', async (request, response) => {
         users.find((user) => user.id === listing.ownerId)
       )
     ),
+  });
+});
+
+app.get('/api/admin/feedback', async (request, response) => {
+  const auth = await requireAdmin(request, response);
+
+  if (!auth) {
+    return;
+  }
+
+  const entries = await readFeedbackEntries();
+
+  response.json({
+    feedback: entries,
   });
 });
 
