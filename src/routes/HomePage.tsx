@@ -214,7 +214,6 @@ type HomeFooterProps = {
   isSavingFeedback: boolean;
   onFeedbackChange: (field: 'name' | 'email' | 'message', value: string) => void;
   onFeedbackSubmit: (event: FormEvent<HTMLFormElement>) => void;
-  onFeedbackMailto: () => void;
 };
 
 function HomeFooter({
@@ -225,7 +224,6 @@ function HomeFooter({
   isSavingFeedback,
   onFeedbackChange,
   onFeedbackSubmit,
-  onFeedbackMailto,
 }: HomeFooterProps) {
   const footerGroups = [
     {
@@ -277,7 +275,7 @@ function HomeFooter({
             <span className="site-footer__spotlight-label">Manda feedback</span>
             <strong>Se vuoi lasciare un commento sul sito, puoi farlo da qui.</strong>
             <p>
-              Puoi salvare una nota nel browser oppure aprire direttamente la mail di contatto.
+              Compila il form e invia il tuo feedback direttamente al team AdFido.
             </p>
             <div className="site-footer__spotlight-meta">
               <span>{feedbackDrafts.length} note salvate in questo browser</span>
@@ -319,8 +317,8 @@ function HomeFooter({
             <span className="site-footer__eyebrow">Note / Commenti</span>
             <h3>Lascia un feedback diretto sul sito</h3>
             <p>
-              Se noti un problema o vuoi proporre un miglioramento, puoi scriverlo qui e salvarlo
-              oppure inviarlo via email.
+              Se noti un problema o vuoi proporre un miglioramento, puoi scriverlo qui e inviarlo
+              direttamente ad AdFido.
             </p>
           </div>
 
@@ -365,21 +363,14 @@ function HomeFooter({
 
             <div className="site-footer__feedback-actions">
               <p>
-                `Salva feedback` lo salva su AdFido e in questo browser. `Invia via email` apre una
-                bozza gia compilata verso `simone.sarro@outlook.it`.
+                Il messaggio viene inviato al team AdFido usando l email inserita nel form come
+                riferimento per eventuali risposte.
               </p>
 
               <div className="site-footer__feedback-buttons">
-                <button className="button button--ghost" type="submit" disabled={isSavingFeedback}>
-                  {isSavingFeedback ? 'Salvataggio...' : 'Salva feedback'}
-                </button>
-                <button
-                  className="button button--primary"
-                  type="button"
-                  onClick={onFeedbackMailto}
-                >
+                <button className="button button--primary" type="submit" disabled={isSavingFeedback}>
                   <Send size={18} />
-                  Invia via email
+                  {isSavingFeedback ? 'Invio in corso...' : 'Invia feedback'}
                 </button>
               </div>
             </div>
@@ -666,6 +657,8 @@ export function HomePage() {
         }),
       });
 
+      const result = await response.json().catch(() => null);
+
       if (!response.ok) {
         throw new Error('Feedback API failed');
       }
@@ -673,14 +666,21 @@ export function HomePage() {
       await new Promise((resolve) => window.setTimeout(resolve, 220));
       window.localStorage.setItem(feedbackDraftKey, JSON.stringify(nextDrafts));
       setFeedbackDrafts(nextDrafts);
+
+      const emailDelivered = result?.emailDelivery?.delivered === true;
+
       setFeedbackSuccess(
-        'Feedback salvato su AdFido e anche in locale nel browser. Puoi comunque inviarlo via email se preferisci.'
+        emailDelivered
+          ? 'Feedback inviato correttamente. Il messaggio e arrivato ad AdFido e la tua email resta disponibile per eventuali risposte.'
+          : 'Feedback ricevuto e salvato su AdFido. L invio email automatico non risulta ancora attivo.'
       );
       setFeedbackForm({ name: '', email: '', message: '' });
       showToast({
-        title: 'Feedback salvato',
-        description: 'La nota e stata archiviata su AdFido e salvata anche in locale.',
-        tone: 'success',
+        title: emailDelivered ? 'Feedback inviato' : 'Feedback ricevuto',
+        description: emailDelivered
+          ? 'Il messaggio e stato salvato e inviato via email al team AdFido.'
+          : 'Il messaggio e stato salvato, ma l email automatica non risulta ancora attiva.',
+        tone: emailDelivered ? 'success' : 'info',
       });
     } catch {
       try {
@@ -688,10 +688,10 @@ export function HomePage() {
         window.localStorage.setItem(feedbackDraftKey, JSON.stringify(nextDrafts));
         setFeedbackDrafts(nextDrafts);
         setFeedbackSuccess(
-          'Feedback salvato solo in locale nel browser. Se vuoi mandarlo subito, usa il pulsante email.'
+          'Non siamo riusciti a inviare il feedback al server. Lo abbiamo salvato solo in locale su questo browser.'
         );
         showToast({
-          title: 'Feedback salvato in locale',
+          title: 'Invio non riuscito',
           description: 'Il backend non ha risposto, ma la nota resta disponibile su questo browser.',
           tone: 'info',
         });
@@ -707,65 +707,6 @@ export function HomePage() {
     } finally {
       setIsSavingFeedback(false);
     }
-  };
-
-  const handleFeedbackMailto = () => {
-    const subjectText = 'Feedback sito AdFido beta';
-    const bodyText = [
-      `Nome: ${feedbackForm.name || 'Non specificato'}`,
-      `Email: ${feedbackForm.email || 'Non specificata'}`,
-      '',
-      'Feedback:',
-      feedbackForm.message || '',
-    ].join('\n');
-    const subject = encodeURIComponent(subjectText);
-    const body = encodeURIComponent(bodyText);
-    const mailtoUrl = `mailto:simone.sarro@outlook.it?subject=${subject}&body=${body}`;
-    const outlookComposeUrl =
-      `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent('simone.sarro@outlook.it')}` +
-      `&subject=${subject}&body=${body}`;
-
-    if (feedbackForm.message.trim().length < 8) {
-      setFeedbackSuccess('');
-      setFeedbackError('Scrivi prima un feedback un po piu chiaro, poi apriamo la mail.');
-      showToast({
-        title: 'Feedback troppo breve',
-        description: 'Aggiungi qualche dettaglio prima di inviarlo via email.',
-        tone: 'warning',
-      });
-      return;
-    }
-
-    const openedWindow = window.open(outlookComposeUrl, '_blank', 'noopener,noreferrer');
-
-    if (openedWindow) {
-      setFeedbackSuccess(
-        'Abbiamo aperto una bozza email precompilata su Outlook. Controlla la nuova scheda e inviala da li.'
-      );
-      showToast({
-        title: 'Bozza email aperta',
-        description: 'Si e aperta una bozza Outlook gia compilata con il tuo feedback.',
-        tone: 'success',
-      });
-      return;
-    }
-
-    const fallbackLink = document.createElement('a');
-    fallbackLink.href = mailtoUrl;
-    fallbackLink.target = '_self';
-    fallbackLink.rel = 'noreferrer';
-    document.body.appendChild(fallbackLink);
-    fallbackLink.click();
-    document.body.removeChild(fallbackLink);
-
-    setFeedbackSuccess(
-      'Abbiamo provato ad aprire il client email del dispositivo con il messaggio gia compilato.'
-    );
-    showToast({
-      title: 'Apertura email avviata',
-      description: 'Se non vedi nulla, controlla se il browser ha un client mail configurato.',
-      tone: 'info',
-    });
   };
 
   if (!data) {
@@ -1124,7 +1065,6 @@ export function HomePage() {
           setFeedbackForm((current) => ({ ...current, [field]: value }));
         }}
         onFeedbackSubmit={handleFeedbackSubmit}
-        onFeedbackMailto={handleFeedbackMailto}
       />
     </>
   );
