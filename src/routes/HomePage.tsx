@@ -259,10 +259,10 @@ function HomeFooter({
         <div className="site-footer__hero">
           <div className="site-footer__brand">
             <span className="site-footer__eyebrow">AdFido v1.0.0</span>
-            <strong>Una chiusura piu calda, piu credibile e piu utile da far vedere a chi conta.</strong>
+            <strong>AdFido riunisce annunci, approfondimenti e strumenti utili in uno spazio piu chiaro e ordinato.</strong>
             <p>
-              Il footer non deve sembrare un riempitivo: qui chiudiamo la homepage con tono piu
-              editoriale, percorsi chiari e un punto diretto per lasciare osservazioni vere sul sito.
+              In fondo alla homepage trovi i collegamenti principali e uno spazio dedicato per
+              lasciare osservazioni, commenti o suggerimenti utili sul sito.
             </p>
           </div>
 

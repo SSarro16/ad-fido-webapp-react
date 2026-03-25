@@ -4481,6 +4481,47 @@ img {
   justify-content: start;
 }
 
+.admin-feedback-list {
+  align-items: stretch;
+}
+
+.admin-feedback-card,
+.admin-feedback-card__topline,
+.admin-feedback-card__meta {
+  display: grid;
+}
+
+.admin-feedback-card {
+  gap: 0.9rem;
+}
+
+.admin-feedback-card__topline {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.admin-feedback-card__topline strong,
+.admin-feedback-card__topline span,
+.admin-feedback-card p {
+  margin: 0;
+}
+
+.admin-feedback-card__topline span:not(.chip) {
+  color: var(--text-soft);
+}
+
+.admin-feedback-card p {
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.admin-feedback-card__meta {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .toast-viewport {
   position: fixed;
   right: 1.2rem;

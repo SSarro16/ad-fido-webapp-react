@@ -33,6 +33,11 @@ const ProfessionalDashboardPage = lazy(() =>
     default: module.ProfessionalDashboardPage,
   }))
 );
+const AdminFeedbackPage = lazy(() =>
+  import('./routes/AdminFeedbackPage').then((module) => ({
+    default: module.AdminFeedbackPage,
+  }))
+);
 
 function withFallback(element: ReactNode) {
   return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
@@ -71,6 +76,14 @@ export const router = createBrowserRouter([
         element: withFallback(
           <RequireRole allowedRoles={['subscriber', 'breeder', 'shelter']}>
             <ProfessionalDashboardPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'admin/feedback',
+        element: withFallback(
+          <RequireRole allowedRoles={['admin']}>
+            <AdminFeedbackPage />
           </RequireRole>
         ),
       },

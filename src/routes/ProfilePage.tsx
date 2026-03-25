@@ -124,6 +124,13 @@ export function ProfilePage() {
   const quickActions = useMemo<QuickAction[]>(
     () =>
       [
+        session?.user.role === 'admin'
+          ? {
+              label: 'Apri feedback sito',
+              href: '/admin/feedback',
+              tone: 'secondary' as const,
+            }
+          : null,
         dashboardHref
           ? {
               label: 'Apri dashboard operativa',
