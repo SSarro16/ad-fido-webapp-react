@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 
+const MAIL_TIMEOUT_MS = 12000;
+
 function readSmtpConfig() {
   const host = process.env.SMTP_HOST?.trim();
   const port = Number(process.env.SMTP_PORT ?? 587);
@@ -51,15 +53,23 @@ export async function sendFeedbackMail(feedback) {
     port: smtpConfig.port,
     secure: smtpConfig.secure,
     auth: smtpConfig.auth,
+    connectionTimeout: MAIL_TIMEOUT_MS,
+    greetingTimeout: MAIL_TIMEOUT_MS,
+    socketTimeout: MAIL_TIMEOUT_MS,
   });
 
-  await transporter.sendMail({
-    from: smtpConfig.from,
-    to: smtpConfig.to,
-    replyTo: feedback.email || undefined,
-    subject: `Feedback AdFido - ${feedback.name || 'Utente sito'}`,
-    text: buildFeedbackMailBody(feedback),
-  });
+  await Promise.race([
+    transporter.sendMail({
+      from: smtpConfig.from,
+      to: smtpConfig.to,
+      replyTo: feedback.email || undefined,
+      subject: `Feedback AdFido - ${feedback.name || 'Utente sito'}`,
+      text: buildFeedbackMailBody(feedback),
+    }),
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('SMTP delivery timeout exceeded.')), MAIL_TIMEOUT_MS);
+    }),
+  ]);
 
   return {
     delivered: true,
