@@ -42,8 +42,8 @@ export function buildListingFeed(listings: Listing[]): ListingFeedItem[] {
       items.push({
         type: 'sponsor',
         sponsorId: `sponsor-${index + 1}`,
-        title: 'Spazio sponsor premium',
-        body: 'Visibilita dedicata per allevamenti e rifugi verificati, senza interrompere la ricerca.',
+        title: 'Spazio sponsor',
+        body: 'Uno spazio dedicato per strutture e allevatori che vogliono maggiore visibilita.',
       });
     }
 

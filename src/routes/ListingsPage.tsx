@@ -52,7 +52,7 @@ export function ListingsPage() {
         <SectionTitle
           eyebrow="Ricerca"
           title="Annunci cani"
-          description="Filtri rapidi e card perfettamente allineate alla homepage, cosi confronti gli annunci nello stesso formato ovunque."
+          description="Filtra gli annunci per parole chiave, localita, sesso e tipologia del profilo che pubblica."
         />
 
         <div className="marketplace-layout">
@@ -133,7 +133,7 @@ export function ListingsPage() {
               <strong>
                 {data?.filter((item) => item.type === 'listing').length ?? 0} risultati
               </strong>
-              <span>Stesso formato card della homepage, per confronti piu chiari e puliti.</span>
+              <span>Ogni annuncio mostra le stesse informazioni principali per aiutarti a confrontarli meglio.</span>
             </Reveal>
 
             <div className="results-list results-list--cards">

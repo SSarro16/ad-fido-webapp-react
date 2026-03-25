@@ -88,7 +88,7 @@ export const listings: Listing[] = [
     ],
     excerpt: 'Equilibrato, seguito da un canile verificato e pronto per un affido responsabile.',
     description:
-      'Bruno arriva da un percorso di recupero seguito dal Canile Sanitario di San Giorgio Jonico. La scheda include localizzazione reale, badge verificato e reputazione pubblica del canile per dare piu fiducia a chi adotta.',
+      'Bruno arriva da un percorso di recupero seguito dal Canile Sanitario di San Giorgio Jonico. Nella scheda trovi posizione, riferimenti del canile e recensioni pubbliche.',
     tags: ['Sterilizzato', 'Visita veterinaria', 'Canile verificato'],
     traits: ['Socievole', 'Calmo in casa', 'Ottimo al guinzaglio'],
     phone: '+39 06 7777 2222',
@@ -114,7 +114,7 @@ export const listings: Listing[] = [
     ],
     excerpt: 'Piccola, dolce e adatta a chi desidera un cane da compagnia dal carattere stabile.',
     description:
-      'Maya ha seguito un percorso di socializzazione con rumori domestici, bambini e brevi tragitti in auto. Perfetta per famiglie e per chi cerca una presenza tranquilla.',
+      'Maya ha gia familiarita con rumori domestici, bambini e brevi tragitti in auto. E adatta a chi cerca un cane tranquillo da compagnia.',
     tags: ['Vaccini', 'Libretto sanitario', 'Supporto post-affido'],
     traits: ['Dolce', 'Adatta ad appartamento', 'Abituata ai bambini'],
     phone: '+39 011 4000 112',
@@ -140,7 +140,7 @@ export const listings: Listing[] = [
     ],
     excerpt: 'Protettivo, leale e seguito da educatori: ideale per persone presenti e consapevoli.',
     description:
-      'Argo e un cane strutturato, gestito con un piano educativo chiaro. Cerca una famiglia pronta a mantenere routine, attivita e continuita nelle regole.',
+      'Argo segue gia un percorso educativo e cerca una famiglia presente, abituata a gestire un cane attivo e deciso.',
     tags: ['Educatore partner', 'Vaccini', 'Chip registrato'],
     traits: ['Leale', 'Vigile', 'Ama le passeggiate'],
     sponsorLabel: 'Sponsor',
@@ -165,9 +165,9 @@ export const listings: Listing[] = [
       'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=1200&q=80',
     ],
-    excerpt: 'Vivace, scenografica e selezionata per un temperamento aperto e collaborativo.',
+    excerpt: 'Vivace, socievole e adatta a chi cerca un cane aperto al contatto.',
     description:
-      'Neve cresce in un contesto con ampi spazi e routine di grooming. La scheda include consigli di gestione del mantello e supporto nei primi 60 giorni.',
+      'Neve cresce in un contesto con ampi spazi e routine di grooming. Nella scheda trovi anche indicazioni utili per la gestione del mantello.',
     tags: ['Pedigree', 'Kit cucciolo', 'Supporto onboarding'],
     traits: ['Solare', 'Fotogenica', 'Ama il contatto umano'],
     phone: '+39 045 3100 731',

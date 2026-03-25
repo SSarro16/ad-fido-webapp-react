@@ -241,16 +241,16 @@ function HomeFooter({
       title: 'Contatti e roadmap',
       links: [
         { label: 'Manda feedback', to: '/#footer-feedback' },
-        { label: 'Partnership e attivazioni', to: '/#contatti' },
-        { label: 'Supporto progetto', to: '/#contatti' },
+        { label: 'Richieste e collaborazioni', to: '/#contatti' },
+        { label: 'Contatti', to: '/#contatti' },
       ],
     },
   ];
 
   const footerHighlights = [
-    'Marketplace piu ordinato, con ruoli distinti e schede leggibili.',
-    'Spazio beta pensato per far vedere bene prodotto, flussi e affidabilita.',
-    'Design editoriale, ricerca chiara e contatti piu consapevoli.',
+    'Link principali raccolti in un unico punto.',
+    'Feedback e contatti sempre raggiungibili dalla homepage.',
+    'Una chiusura piu semplice e piu leggibile.',
   ];
 
   return (
@@ -259,19 +259,18 @@ function HomeFooter({
         <div className="site-footer__hero">
           <div className="site-footer__brand">
             <span className="site-footer__eyebrow">AdFido v1.0.0</span>
-            <strong>AdFido riunisce annunci, approfondimenti e strumenti utili in uno spazio piu chiaro e ordinato.</strong>
+            <strong>AdFido raccoglie annunci, articoli e contatti utili in un unico punto.</strong>
             <p>
-              In fondo alla homepage trovi i collegamenti principali e uno spazio dedicato per
-              lasciare osservazioni, commenti o suggerimenti utili sul sito.
+              In fondo alla homepage trovi i collegamenti principali e uno spazio per lasciare un
+              commento sul sito.
             </p>
           </div>
 
           <div className="site-footer__spotlight">
             <span className="site-footer__spotlight-label">Manda feedback</span>
-            <strong>Segnala cosa funziona, cosa stona e cosa miglioreresti nella beta.</strong>
+            <strong>Se vuoi lasciare un commento sul sito, puoi farlo da qui.</strong>
             <p>
-              I commenti possono restare salvati in locale sul sito oppure essere inviati alla mail
-              di riferimento, cosi il confronto resta semplice e immediato.
+              Puoi salvare una nota nel browser oppure aprire direttamente la mail di contatto.
             </p>
             <div className="site-footer__spotlight-meta">
               <span>{feedbackDrafts.length} note salvate in questo browser</span>
@@ -299,7 +298,7 @@ function HomeFooter({
           ))}
 
           <section className="site-footer__column site-footer__column--notes">
-            <h3>Perche questo footer funziona meglio</h3>
+            <h3>In evidenza</h3>
             <div className="site-footer__notes">
               {footerHighlights.map((item) => (
                 <span key={item}>{item}</span>
@@ -313,9 +312,8 @@ function HomeFooter({
             <span className="site-footer__eyebrow">Note / Commenti</span>
             <h3>Lascia un feedback diretto sul sito</h3>
             <p>
-              Se noti un problema, una scelta da rivedere o un miglioramento utile, puoi scriverlo
-              qui. In questa beta il messaggio puo essere salvato nel browser e preparato anche per
-              l invio via email.
+              Se noti un problema o vuoi proporre un miglioramento, puoi scriverlo qui e salvarlo
+              oppure inviarlo via email.
             </p>
           </div>
 
@@ -360,8 +358,8 @@ function HomeFooter({
 
             <div className="site-footer__feedback-actions">
               <p>
-                `Salva feedback` lo lascia disponibile in questo browser. `Invia via email` apre il
-                client di posta verso `simone.sarro@outlook.it`.
+                `Salva feedback` lo salva su AdFido e in questo browser. `Invia via email` apre il
+                tuo client di posta verso `simone.sarro@outlook.it`.
               </p>
 
               <div className="site-footer__feedback-buttons">
@@ -416,17 +414,17 @@ export function HomePage() {
       icon: Dog,
       title: 'Cerca per tipo di cane',
       description:
-        'Parti da razza, taglia, eta o carattere e confronta annunci con la stessa struttura.',
+        'Parti da razza, taglia, eta o carattere e scorri gli annunci in modo piu rapido.',
     },
     {
       icon: Building2,
       title: 'Esplora canili e strutture',
-      description: 'Capisci subito chi pubblica, dove si trova e se il profilo e verificato.',
+      description: 'Controlla chi pubblica, dove si trova e se il profilo e verificato.',
     },
     {
       icon: ShieldCheck,
       title: 'Valuta con piu fiducia',
-      description: 'Mappe, recensioni e dettagli essenziali riducono rumore e improvvisazione.',
+      description: 'Mappe, recensioni e dettagli utili ti aiutano a valutare meglio ogni annuncio.',
     },
   ];
 
@@ -434,19 +432,17 @@ export function HomePage() {
     {
       icon: Sparkles,
       title: 'Schede piu leggibili',
-      description:
-        'Ogni annuncio segue una gerarchia chiara, con informazioni utili prima di tutto.',
+      description: 'Ogni annuncio mostra prima le informazioni principali, senza passaggi inutili.',
     },
     {
       icon: MapPin,
       title: 'Contesto reale',
-      description:
-        'Per i canili verificati mostriamo luogo, reputazione pubblica e segnali di affidabilita.',
+      description: 'Per i canili verificati mostriamo posizione, recensioni e riferimenti utili.',
     },
     {
       icon: Users,
       title: 'Percorsi separati',
-      description: 'Utenti, allevatori e canili hanno aree e dashboard dedicate ai loro flussi.',
+      description: 'Utenti, allevatori e canili hanno aree dedicate in base a quello che devono fare.',
     },
   ];
 
@@ -455,12 +451,12 @@ export function HomePage() {
     {
       title: 'Pubblica i tuoi annunci',
       description:
-        'Crea il profilo, inserisci i cani disponibili e gestisci tutto in modo piu semplice.',
+        'Crea il profilo, inserisci i cani disponibili e aggiorna le schede da un unico pannello.',
     },
     {
       title: 'Fatti trovare meglio',
       description:
-        'Presenti meglio la tua struttura o il tuo allevamento e dai piu fiducia a chi cerca.',
+        'Mostra in modo chiaro la tua struttura o il tuo allevamento a chi sta cercando.',
     },
   ];
 
@@ -719,10 +715,9 @@ export function HomePage() {
         <div className="container home-chooser">
           <Reveal className="home-chooser__lead" y={18}>
             <span className="home-chooser__eyebrow">Percorsi principali</span>
-            <h2>Una homepage piu chiara, costruita attorno a cosa vuoi fare davvero.</h2>
+            <h2>Una homepage che ti aiuta a capire subito dove andare.</h2>
             <p>
-              Parti dalla ricerca, capisci chi pubblica e arriva piu velocemente alle schede che
-              contano.
+              Parti dalla ricerca, controlla chi pubblica e apri le schede che ti interessano.
             </p>
           </Reveal>
 
@@ -749,7 +744,7 @@ export function HomePage() {
         <div className="container home-trustband">
           <div className="home-trustband__copy">
             <span className="home-trustband__eyebrow">Perche AdFido</span>
-            <h2>Un marketplace piu ordinato per ridurre confusione e aumentare fiducia.</h2>
+            <h2>Uno spazio piu semplice per cercare, confrontare e contattare.</h2>
           </div>
 
           <div className="home-trustband__grid">
@@ -773,7 +768,7 @@ export function HomePage() {
             className="section-title--wide"
             eyebrow="In evidenza"
             title="Annunci da cui partire"
-            description="Una selezione iniziale che mantiene lo stesso formato della lista annunci: stessa card, stessa gerarchia, stesso confronto."
+            description="Una prima selezione di annunci con lo stesso formato che trovi nella lista completa."
           />
 
           <StaggerGrid className="listing-grid" delay={0.1}>
@@ -800,8 +795,8 @@ export function HomePage() {
               <span className="home-professional__eyebrow">Area professionale</span>
               <h2>Sei un allevatore privato o un canile / rifugio?</h2>
               <p>
-                Crea il tuo account e comincia a pubblicare annunci in uno spazio pensato per
-                profili professionali, con piu ordine, piu controllo e una presenza piu forte.
+                Crea il tuo account e pubblica gli annunci in un area riservata ai profili
+                professionali.
               </p>
 
               <div className="home-professional__benefits">
@@ -830,8 +825,8 @@ export function HomePage() {
                   <strong>{item}</strong>
                   <p>
                     {index === 0
-                      ? 'Perfetto per chi vuole raccontare bene cucciolate, disponibilita e contesto.'
-                      : 'Ideale per affidi, annunci verificati e una presenza piu istituzionale.'}
+                      ? 'Per chi pubblica cucciolate e disponibilita dal proprio allevamento.'
+                      : 'Per chi gestisce affidi, canili e rifugi.'}
                   </p>
                 </article>
               ))}
@@ -868,7 +863,7 @@ export function HomePage() {
             className="section-title--wide"
             eyebrow="Contatti"
             title="Contatti, collaborazioni e richieste"
-            description="Se vuoi scriverci per il progetto, per una partnership o per capire meglio come sta evolvendo AdFido, qui trovi un punto di contatto semplice e diretto."
+            description="Se vuoi contattarci per una collaborazione, per informazioni o per una richiesta specifica, qui trovi il riferimento giusto."
           />
 
           <div className="contact-layout">
@@ -877,10 +872,10 @@ export function HomePage() {
                 <div className="contact-card__icon">
                   <MapPin size={20} />
                 </div>
-                <strong>Progetto in crescita</strong>
+                <strong>A chi si rivolge AdFido</strong>
                 <p>
-                  AdFido nasce con un focus nazionale e con l obiettivo di diventare un punto di
-                  riferimento chiaro per annunci, affidi e profili professionali.
+                  AdFido mette insieme annunci e affidi per privati, allevatori, canili, rifugi e
+                  realta che lavorano ogni giorno con i cani.
                 </p>
                 <div className="contact-map">
                   <span>Privati</span>
@@ -894,15 +889,15 @@ export function HomePage() {
                 <div className="contact-card__icon">
                   <Sparkles size={20} />
                 </div>
-                <strong>Confronto aperto</strong>
+                <strong>Quando scriverci</strong>
                 <p>
-                  In questa fase ci interessa raccogliere riscontri utili sul prodotto, capire cosa
-                  funziona meglio e quali parti vanno rese piu chiare.
+                  Puoi usare questo spazio per domande, proposte di collaborazione o osservazioni
+                  sul sito.
                 </p>
                 <div className="contact-socials">
                   <span className="chip">Feedback sul sito</span>
-                  <span className="chip">Richieste di collaborazione</span>
-                  <span className="chip">Suggerimenti di prodotto</span>
+                  <span className="chip">Collaborazioni</span>
+                  <span className="chip">Richieste generali</span>
                 </div>
               </article>
             </Reveal>
@@ -911,8 +906,8 @@ export function HomePage() {
               <div className="contact-form-panel__header">
                 <strong>Scrivici</strong>
                 <p>
-                  Compila il form se vuoi lasciare una richiesta, proporre una collaborazione o
-                  mandarci un messaggio legato al progetto.
+                  Compila il form e lascia il tuo messaggio. Ti aiuta a raccogliere tutto in modo
+                  semplice anche durante questa fase di beta.
                 </p>
               </div>
 
@@ -933,7 +928,7 @@ export function HomePage() {
                   <p>
                     {contactDrafts[0]
                       ? `${contactDrafts[0].audience} · ${new Date(contactDrafts[0].createdAt).toLocaleDateString('it-IT')}`
-                      : 'Dopo il primo invio comparira qui.'}
+                      : 'Comparira qui dopo il primo invio.'}
                   </p>
                 </article>
               </div>
@@ -1022,7 +1017,7 @@ export function HomePage() {
                       setContactSuccess('');
                       setContactForm((current) => ({ ...current, message: event.target.value }));
                     }}
-                    placeholder="Scrivi cosa ti serve, in che fase sei e come vorresti usare AdFido."
+                    placeholder="Scrivi pure il motivo del contatto o il feedback che vuoi lasciare."
                     rows={5}
                     required
                   />
@@ -1030,8 +1025,8 @@ export function HomePage() {
 
                 <div className="contact-form__footer">
                   <p className="contact-form__hint">
-                    Il messaggio viene salvato in locale in questa beta, cosi non perdi il contenuto
-                    mentre rifiniamo il flusso definitivo.
+                    Il messaggio viene salvato in locale in questa fase beta, cosi non perdi il
+                    contenuto anche se chiudi la pagina.
                   </p>
 
                   <button

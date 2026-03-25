@@ -52,22 +52,22 @@ export function ProfilePage() {
       : session?.user.role === 'breeder' || session?.user.accountType === 'private_breeder'
         ? 'Profilo allevatore privato'
         : session?.user.role === 'admin'
-          ? 'Profilo operativo AdFido'
+          ? 'Profilo admin'
           : 'Profilo utente';
   const roleFeatures = useMemo<ProfileFeature[]>(() => {
     if (session?.user.role === 'admin') {
       return [
         {
-          title: 'Profilo operativo',
-          body: 'Usa questo spazio per verificare dati account, contatti e accessi della sessione.',
+          title: 'Profilo admin',
+          body: 'Qui puoi controllare i dati dell account e accedere alle pagine di gestione.',
         },
         {
-          title: 'Ambiente demo',
-          body: 'La repo ufficiale V1 resta focalizzata sui flussi pubblici e professionali del prodotto.',
+          title: 'Accessi rapidi',
+          body: 'Da qui puoi entrare nelle aree riservate utili per verifiche e controllo contenuti.',
         },
         {
-          title: 'Ruolo separato',
-          body: 'Le estensioni di governance e moderazione restano disponibili come evoluzione successiva.',
+          title: 'Ruolo amministrativo',
+          body: 'Il profilo admin resta separato dagli account utente e professionali.',
         },
       ];
     }
@@ -76,15 +76,15 @@ export function ProfilePage() {
       return [
         {
           title: 'Identita struttura',
-          body: 'Rafforza fiducia e continuita con nome pubblico, telefono e presenza coerente.',
+          body: 'Tieni aggiornati nome pubblico, telefono e dati principali della struttura.',
         },
         {
           title: 'Schede affido',
-          body: 'Gestisci casi multipli con workflow per stati e passaggio chiaro verso l amministrazione.',
+          body: 'Gestisci le schede dei cani e segui lo stato di pubblicazione.',
         },
         {
-          title: 'Operativita rifugio',
-          body: 'Usa il profilo come base ordinata, lasciando alla dashboard il lavoro sui casi attivi.',
+          title: 'Profilo struttura',
+          body: 'Il profilo raccoglie i dati generali, mentre la dashboard resta dedicata alle schede.',
         },
       ];
     }
@@ -93,15 +93,15 @@ export function ProfilePage() {
       return [
         {
           title: 'Profilo allevatore',
-          body: 'Rendi piu credibile la presenza privata con contatti puliti e nome pubblico leggibile.',
+          body: 'Aggiorna i contatti e il nome pubblico con cui vuoi presentarti sul sito.',
         },
         {
           title: 'Gestione slot',
-          body: 'Mantieni il focus su poche schede curate, con massimo 3 annunci per account.',
+          body: 'L account allevatore puo gestire fino a 3 annunci.',
         },
         {
-          title: 'Qualita prima di tutto',
-          body: 'Usa il profilo per consolidare identita e la dashboard per rifinire media e contenuti.',
+          title: 'Schede e profilo',
+          body: 'Il profilo serve per i dati generali, la dashboard per modificare gli annunci.',
         },
       ];
     }
@@ -109,15 +109,15 @@ export function ProfilePage() {
     return [
       {
         title: 'Profilo utente',
-        body: 'Qui tieni ordinati dati personali, contatti e accesso alle tue azioni principali.',
+        body: 'Qui trovi i tuoi dati personali e i collegamenti principali del tuo account.',
       },
       {
         title: 'Ricerca e preferiti',
-        body: 'Il profilo utente resta leggero e orientato a seguire gli annunci salvati.',
+        body: 'Dall area personale puoi tornare rapidamente agli annunci salvati.',
       },
       {
-        title: 'Esperienza pulita',
-        body: 'Niente complessita operative: solo i dati essenziali per usare bene il marketplace.',
+        title: 'Gestione semplice',
+        body: 'Questa pagina resta essenziale e raccoglie solo le informazioni utili del profilo.',
       },
     ];
   }, [session]);
@@ -133,7 +133,7 @@ export function ProfilePage() {
           : null,
         dashboardHref
           ? {
-              label: 'Apri dashboard operativa',
+              label: 'Apri dashboard',
               href: dashboardHref,
               tone: 'secondary' as const,
             }
@@ -172,7 +172,7 @@ export function ProfilePage() {
             /:\s*$/,
             ''
           )}
-          description="Profilo personale, stato account e accessi rapidi alle aree operative del ruolo."
+          description="Dati account, stato del profilo e collegamenti utili in base al tuo ruolo."
           className="section-title--wide"
         />
         <div className="dashboard-grid dashboard-grid--balanced">
@@ -185,8 +185,7 @@ export function ProfilePage() {
               <UserCircle2 size={20} />
             </div>
             <p>
-              Qui gestisci dati account e profilo pubblico. La dashboard resta lo spazio operativo
-              dedicato ad annunci e gestione dei flussi principali del marketplace.
+              Qui puoi aggiornare i dati del tuo account e controllare i collegamenti principali.
             </p>
             <div className="chip-row">
               <span className="chip">{accountLabel}</span>
@@ -247,9 +246,7 @@ export function ProfilePage() {
             <div className="dashboard-panel__header dashboard-panel__header--stacked">
               <div>
                 <h3>Stato account</h3>
-                <p>
-                  Una sintesi piu leggibile del tuo profilo attuale e dei riferimenti principali.
-                </p>
+                <p>Una sintesi dei dati principali del tuo profilo.</p>
               </div>
             </div>
             <div className="chip-row">
@@ -280,7 +277,7 @@ export function ProfilePage() {
             <div className="dashboard-panel__header dashboard-panel__header--stacked">
               <div>
                 <h3>Modifica profilo</h3>
-                <p>Aggiorna identita, contatti e presenza pubblica del tuo account.</p>
+                <p>Aggiorna nome, telefono e nome pubblico del tuo account.</p>
               </div>
             </div>
             <form

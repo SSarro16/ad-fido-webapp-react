@@ -29,7 +29,7 @@ const seededListings = [
     color: 'Miele',
     excerpt: 'Cucciolo equilibrato, socializzato in ambiente familiare e gia pronto ai colloqui.',
     description:
-      'Annuncio demo dell allevatore privato con documentazione, gallery completa e cronologia approvata.',
+      'Scheda pubblicata dell allevatore privato, con documentazione, foto e cronologia approvata.',
     tags: ['Pedigree', 'Microchip', 'Vaccini'],
     traits: ['Socievole', 'Curioso'],
     images: [
@@ -62,7 +62,7 @@ const seededListings = [
     color: 'Bianco',
     excerpt: 'Profilo del rifugio in revisione con immagini e copy quasi pronti.',
     description:
-      'Annuncio seed per mostrare lo stato in revisione e i controlli media prima della pubblicazione.',
+      'Scheda del rifugio in revisione, con controlli sulle immagini prima della pubblicazione.',
     tags: ['Adozione responsabile'],
     traits: ['Solare', 'Compatibile con altri cani'],
     images: [
@@ -93,7 +93,7 @@ const seededListings = [
     excerpt:
       'Cucciola socievole seguita dai volontari del Canile Sanitario di San Giorgio Jonico e pronta per un affido responsabile.',
     description:
-      'Luna e una giovane meticcia seguita dal team del Canile Sanitario di San Giorgio Jonico. La scheda mette in evidenza un contesto reale di rifugio verificato, con localizzazione, reputazione pubblica e contatti tracciati per un affido piu trasparente.',
+      'Luna e una giovane meticcia seguita dal team del Canile Sanitario di San Giorgio Jonico. Nella scheda trovi posizione, riferimenti del canile e contatti utili per l affido.',
     tags: ['Microchip', 'Vaccini', 'Canile verificato'],
     traits: ['Energica', 'Affettuosa', 'Abituata ai volontari'],
     images: [
@@ -155,7 +155,7 @@ const seededListings = [
     color: 'Crema',
     excerpt: 'Scheda sospesa in precedenza per fotografie insufficienti e testo troppo generico.',
     description:
-      'Annuncio respinto dall amministrazione per mostrare il flusso di revisione con note operative.',
+      'Scheda respinta in revisione con note da correggere prima di un nuovo invio.',
     tags: ['Adozione responsabile'],
     traits: ['Dolce'],
     images: [

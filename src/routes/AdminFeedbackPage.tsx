@@ -16,14 +16,14 @@ export function AdminFeedbackPage() {
         <SectionTitle
           eyebrow="Admin"
           title="Feedback ricevuti dal sito"
-          description="Qui trovi i commenti inviati dalla homepage, salvati dal form feedback della beta."
+          description="Qui trovi i messaggi inviati dal form feedback della homepage."
           className="section-title--wide"
         />
 
         {isLoading ? (
           <DogLoadingScreen
             title="Stiamo recuperando i feedback"
-            description="Un attimo e carichiamo commenti, email e note ricevute dal sito."
+            description="Carichiamo i messaggi ricevuti dal sito."
             variant="page"
           />
         ) : null}
@@ -34,7 +34,7 @@ export function AdminFeedbackPage() {
             <div>
               <strong>{feedback.length}</strong>
               <p>Feedback salvati</p>
-              <small>Totale note archiviate nel database</small>
+              <small>Totale messaggi archiviati</small>
             </div>
           </article>
           <article className="panel account-card seller-stat-card">

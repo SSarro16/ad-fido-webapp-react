@@ -46,10 +46,10 @@ export function SearchHero({ stats, frequentSearches }: SearchHeroProps) {
       <div className="container hero__inner">
         <Reveal className="hero__copy" y={36}>
           <span className="hero__eyebrow">La ricerca giusta per l affido giusto</span>
-          <h1>Trova cani, canili verificati e annunci affidabili in un unico posto.</h1>
+          <h1>Trova cani, canili verificati e annunci in un unico posto.</h1>
           <p>
-            AdFido mette al centro la ricerca: annunci chiari, strutture leggibili, contatti reali e
-            un flusso piu ordinato per chi cerca o pubblica.
+            Cerca per razza, rifugio, allevatore o zona e consulta schede complete prima di
+            contattare chi pubblica.
           </p>
 
           <StaggerGrid className="hero__stats" delay={0.15}>
@@ -67,9 +67,7 @@ export function SearchHero({ stats, frequentSearches }: SearchHeroProps) {
           <div className="hero__panel-header">
             <span className="hero__panel-eyebrow">Inizia da qui</span>
             <h2>Cerca il cane giusto</h2>
-            <p>
-              Filtra subito per nome, razza, allevatore o canile, e parti da annunci piu chiari.
-            </p>
+            <p>Usa i filtri principali e parti dagli annunci che ti interessano davvero.</p>
           </div>
 
           <motion.form

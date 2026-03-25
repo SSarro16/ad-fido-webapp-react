@@ -25,7 +25,7 @@ export const articleItems: Article[] = [
     image:
       'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=1200&q=80',
     excerpt:
-      'Focus su acqua, quantita e abitudini sane per accompagnare il cucciolo in modo piu consapevole.',
+      'Focus su acqua, quantita e abitudini utili nei primi mesi del cucciolo.',
     url: 'https://www.royalcanin.com/it/dogs/puppy/puppy-feeding-and-nutrition',
     kind: 'article',
     ctaLabel: 'Apri la guida',
@@ -40,7 +40,7 @@ export const articleItems: Article[] = [
     image:
       'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=1200&q=80',
     excerpt:
-      'Un contenuto editoriale in italiano su approccio educativo, relazione e primi passi per lavorare bene con il cane.',
+      'Un articolo in italiano su approccio educativo, relazione e primi passi con il cane.',
     url: 'https://wamiz.it/cane/consigli/37923/addestramento-del-cane-intervista-educatore-cinofilo',
     kind: 'article',
     ctaLabel: 'Scopri i consigli',
@@ -55,7 +55,7 @@ export const articleItems: Article[] = [
     image:
       'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1200&q=80',
     excerpt:
-      'Una risorsa utile per lavorare su esperienze graduali, contesto e sicurezza del cane nei primi mesi.',
+      'Una risorsa utile su socializzazione, prime abitudini e gestione del cucciolo.',
     url: 'https://www.zooplus.it/magazine/cane/cucciolo-cane/socializzazione-cucciolo',
     kind: 'article',
     ctaLabel: 'Leggi la guida',
@@ -100,7 +100,7 @@ export const articleItems: Article[] = [
     image:
       'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=1200&q=80',
     excerpt:
-      'Video e approfondimenti in italiano dedicati soprattutto all alimentazione del cane e del gatto con taglio divulgativo.',
+      'Video in italiano dedicati soprattutto all alimentazione e al benessere quotidiano.',
     url: 'https://valerioguiggi.it/apre-canale-youtube-valerioguiggi-it/',
     kind: 'video',
     ctaLabel: 'Guarda il canale',
@@ -115,7 +115,7 @@ export const articleItems: Article[] = [
     image:
       'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
     excerpt:
-      'Una raccolta di contenuti su calma, attivita e relazione con il cane, utile per dare continuita alla parte video della home.',
+      'Una selezione di contenuti su calma, attivita e relazione con il cane.',
     url: 'https://www.federicabagna.it/it/consulenza/video.html',
     kind: 'video',
     ctaLabel: 'Apri la selezione',

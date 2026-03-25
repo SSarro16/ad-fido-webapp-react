@@ -11,8 +11,7 @@ export const managedListingsSeed: ManagedListing[] = [
     sex: 'Femmina',
     color: 'Bianco e nero',
     excerpt: 'Cucciola vivace e collaborativa, pronta a una famiglia attiva.',
-    description:
-      'Annuncio in stato pubblicato usato come demo per la dashboard subscriber, con media ordinati e cover già assegnata.',
+    description: 'Scheda gia pubblicata, con immagini caricate e copertina assegnata.',
     tags: ['Microchip', 'Vaccini'],
     traits: ['Energica', 'Affettuosa'],
     images: [
@@ -35,8 +34,7 @@ export const managedListingsSeed: ManagedListing[] = [
     sex: 'Femmina',
     color: 'Bianco',
     excerpt: 'Profilo in rifinitura con immagini e copy quasi pronti.',
-    description:
-      'Annuncio usato per mostrare lo stato in revisione e i controlli media che precedono la pubblicazione.',
+    description: 'Scheda in revisione, in attesa di conferma prima della pubblicazione.',
     tags: ['Pedigree'],
     traits: ['Solare'],
     images: [

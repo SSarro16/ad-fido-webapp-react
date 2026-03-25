@@ -47,8 +47,8 @@ export function ArticlesPage() {
       <div className="container">
         <SectionTitle
           eyebrow="Editoriale"
-          title="Guide, video e risorse affidabili"
-          description="Risorse reali e fonti autorevoli su gestione, educazione e nutrizione del cane, con rimando diretto alle pagine originali."
+          title="Articoli, video e risorse utili"
+          description="Una raccolta di contenuti esterni su alimentazione, educazione e vita quotidiana con il cane."
         />
 
         <div className="editorial-groups">

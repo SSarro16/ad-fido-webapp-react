@@ -466,7 +466,7 @@ function ListingComposerCard({
         <section className="seller-editor__section">
           <div className="seller-editor__section-title">
             <strong>Testi e contesto</strong>
-            <p>Rendi chiaro subito perche questa scheda merita fiducia e attenzione.</p>
+            <p>Inserisci le informazioni principali in modo semplice e completo.</p>
           </div>
 
           <div className="seller-editor__grid">
@@ -485,7 +485,7 @@ function ListingComposerCard({
               <textarea
                 {...register('description')}
                 rows={6}
-                placeholder="Spiega carattere, contesto, documentazione e stato del cane."
+                placeholder="Descrivi il cane, il suo carattere e le informazioni utili per chi legge."
               />
               {errors.description ? (
                 <span className="form-error">{errors.description.message}</span>
@@ -497,7 +497,7 @@ function ListingComposerCard({
         <section className="seller-editor__section">
           <div className="seller-editor__section-title">
             <strong>Tag, tratti e media</strong>
-            <p>Carica foto reali, scegli la cover e mantieni la galleria ordinata.</p>
+            <p>Carica le foto e scegli l immagine di copertina della scheda.</p>
           </div>
 
           <div className="seller-editor__grid seller-editor__grid--two">
@@ -685,48 +685,45 @@ export function ProfessionalDashboardPage() {
           eyebrow: 'Allevatore privato',
           titlePrefix: 'Dashboard allevatore privato',
           description:
-            'Area operativa pensata per chi gestisce poche schede curate, con massimo 3 annunci per account e workflow chiaro verso l amministrazione.',
-          leadTitle: 'Una dashboard piu compatta, focalizzata sui tuoi 3 slot.',
+            'Area riservata agli allevatori privati, con un massimo di 3 annunci per account.',
+          leadTitle: 'Gestisci i tuoi annunci da un unico spazio.',
           leadBody:
-            'Qui lavori su poche schede, con attenzione a completezza, media e invio in revisione. L obiettivo non e riempire l area, ma tenere tutto leggibile e sotto controllo.',
+            'Qui puoi creare, modificare e inviare in revisione le tue schede.',
           workflowTitle: 'Regole per allevatore privato',
           workflowItems: [
             ['Limite account', 'Massimo 3 annunci attivi o in lavorazione per account.'],
-            ['Bozze snelle', 'Ogni scheda va preparata bene prima dell invio in revisione.'],
-            ['Approccio premium', 'Poche schede, ma piu pulite, piu complete e piu credibili.'],
+            ['Bozze', 'Ogni scheda puo essere salvata e completata con calma prima dell invio.'],
+            ['Revisione', 'Le schede inviate passano in revisione prima della pubblicazione.'],
           ],
           createLabel: 'Nuovo annuncio',
           createDescription:
-            'Ogni click apre una nuova card indipendente, senza sovrascrivere le schede gia aperte.',
+            'Ogni click apre una nuova card senza modificare quelle gia aperte.',
           listTitle: 'I tuoi 3 slot annunci',
           createCardTitle: 'Nuovo annuncio privato',
           createCardSubtitle:
-            'Compila una nuova scheda in una card separata, con localita suggerita e upload foto reale.',
+            'Compila una nuova scheda in una card separata.',
         }
       : {
           eyebrow: 'Canile / Rifugio',
           titlePrefix: 'Dashboard canile / rifugio',
           description:
-            'Area operativa dedicata a canili e rifugi, pensata per gestire piu schede affido, lavorare per stati e tenere visibile il contesto della struttura.',
-          leadTitle: 'Una dashboard adatta a un flusso piu ampio e continuativo.',
+            'Area riservata a canili e rifugi per gestire le schede di affido.',
+          leadTitle: 'Gestisci le schede del rifugio in un unico spazio.',
           leadBody:
-            'Qui puoi gestire tutte le schede necessarie per il rifugio, organizzare i casi in revisione e mantenere ordinata la presenza pubblica della struttura.',
+            'Qui puoi creare nuove schede, aggiornare quelle esistenti e seguire lo stato di revisione.',
           workflowTitle: 'Regole per canile / rifugio',
           workflowItems: [
-            [
-              'Annunci illimitati',
-              'Puoi gestire tutte le schede affido necessarie alla struttura.',
-            ],
-            ['Workflow per stati', 'Bozze, revisioni e feedback admin restano sempre leggibili.'],
-            ['Contesto struttura', 'L obiettivo e dare fiducia con schede ordinate e coerenti.'],
+            ['Annunci', 'Puoi gestire tutte le schede affido necessarie alla struttura.'],
+            ['Stati', 'Le schede restano divise tra bozze, revisioni e pubblicate.'],
+            ['Profilo', 'I dati della struttura restano separati dalla gestione delle schede.'],
           ],
           createLabel: 'Nuova scheda affido',
           createDescription:
-            'Ogni click apre una nuova card separata, cosi puoi lavorare su piu casi del rifugio in parallelo.',
+            'Ogni click apre una nuova card separata per creare una nuova scheda.',
           listTitle: 'Schede del canile / rifugio',
           createCardTitle: 'Nuova scheda affido',
           createCardSubtitle:
-            'Apri una card dedicata per ogni nuovo caso del rifugio, senza alterare le schede gia aperte.',
+            'Apri una card separata per ogni nuovo caso del rifugio, senza modificare le schede gia aperte.',
         };
 
   const sellerStats = isBreeder
@@ -886,12 +883,12 @@ export function ProfessionalDashboardPage() {
               title={
                 isListingsLoading
                   ? 'Stiamo radunando le tue schede'
-                  : 'Stiamo aggiornando il tuo spazio operativo'
+                  : 'Stiamo aggiornando la dashboard'
               }
               description={
                 isListingsLoading
-                  ? 'Recuperiamo annunci, stato revisione e materiali del tuo profilo.'
-                  : 'Salvataggi, revisioni e modifiche stanno arrivando a destinazione.'
+                  ? 'Carichiamo annunci, stati e dati principali del tuo account.'
+                  : 'Stiamo salvando le modifiche alla dashboard.'
               }
               variant="page"
             />
@@ -982,8 +979,7 @@ export function ProfessionalDashboardPage() {
           <div className="seller-limit-banner seller-limit-banner--shelter">
             <strong>Gestione canile / rifugio</strong>
             <p>
-              Il profilo canile puo pubblicare tutte le schede necessarie. Qui conta di piu tenere
-              ordine, completezza e contesto delle richieste di affido.
+              Il profilo canile puo pubblicare tutte le schede necessarie e aggiornarle in base alle esigenze del rifugio.
             </p>
           </div>
         )}

@@ -432,8 +432,7 @@ export function ListingDetailPage() {
               <span className="detail-sidebar__eyebrow">Pubblicante</span>
               <h3>{listingData.organizationName}</h3>
               <p>
-                Contatto diretto collegato al profilo del pubblicante, pensato per far partire
-                subito una richiesta seria.
+                Contatto diretto del profilo che ha pubblicato l annuncio.
               </p>
             </div>
 
@@ -475,8 +474,8 @@ export function ListingDetailPage() {
             <div className="detail-sidebar__notes">
               <span>Affido</span>
               <p>
-                Prima di procedere consigliamo sempre un contatto approfondito con il pubblicante
-                per conoscere storia, carattere e compatibilita del cane.
+                Prima di procedere ti consigliamo di parlare con chi pubblica per avere piu
+                informazioni sul cane e sul percorso di adozione o acquisto.
               </p>
             </div>
           </aside>

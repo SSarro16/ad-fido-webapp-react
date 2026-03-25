@@ -10,7 +10,7 @@ const pawSteps = ['one', 'two', 'three', 'four'];
 
 export function DogLoadingScreen({
   title = 'Stiamo preparando il prossimo passo',
-  description = 'Aggiorniamo contenuti, profili e schede per tenere il percorso fluido e ordinato.',
+  description = 'Stiamo caricando i contenuti della pagina.',
   variant = 'page',
 }: DogLoadingScreenProps) {
   return (

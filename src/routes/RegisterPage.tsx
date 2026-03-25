@@ -66,18 +66,18 @@ export function RegisterPage() {
           <span className="auth-stage__eyebrow">Registrazione</span>
           <h1>Crea il tuo account personale</h1>
           <p>
-            L account utente e pensato per chi cerca, salva e segue gli annunci. La pubblicazione
-            annunci resta riservata ai profili abbonati di allevatori e canili.
+            Con l account personale puoi salvare annunci, accedere ai preferiti e gestire il tuo
+            profilo. La pubblicazione resta disponibile per i profili professionali.
           </p>
 
           <div className="auth-stage__highlights">
             <div className="auth-stage__highlight">
               <CheckCircle2 size={18} />
-              <span>Preferiti, area personale e sessione persistente fin dal primo accesso.</span>
+              <span>Preferiti, area personale e accesso rapido alle pagine che usi di piu.</span>
             </div>
             <div className="auth-stage__highlight">
               <ShieldCheck size={18} />
-              <span>Area venditori abbonati separata, come previsto dal design funzionale V1.</span>
+              <span>Area professionale separata per allevatori, canili e rifugi.</span>
             </div>
           </div>
         </div>
@@ -86,7 +86,7 @@ export function RegisterPage() {
           <div className="auth-panel__header">
             <span className="auth-panel__tag">Utente</span>
             <h2>Crea il tuo profilo</h2>
-            <p>Compila i dati essenziali e attiva subito il tuo spazio personale.</p>
+            <p>Inserisci i dati principali e completa la registrazione.</p>
           </div>
 
           {submitError ? (
@@ -118,8 +118,8 @@ export function RegisterPage() {
           </label>
 
           <div className="auth-feedback auth-feedback--info">
-            La pubblicazione annunci e la dashboard venditori sono disponibili solo per profili
-            abbonati.
+            La pubblicazione annunci e la dashboard professionale sono disponibili solo per i
+            profili dedicati.
           </div>
 
           <button

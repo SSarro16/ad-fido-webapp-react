@@ -66,13 +66,13 @@ export function AppShell() {
           <DogLoadingScreen
             title={
               !initialized || authStatus === 'loading'
-                ? 'Stiamo riallineando il tuo profilo'
-                : 'Stiamo accompagnandoti alla prossima pagina'
+                ? 'Stiamo caricando il tuo profilo'
+                : 'Stiamo aprendo la prossima pagina'
             }
             description={
               !initialized || authStatus === 'loading'
                 ? 'Controlliamo sessione, permessi e dati essenziali prima di mostrarti tutto.'
-                : 'Un attimo e trovi la prossima tappa, con annunci e contenuti gia pronti.'
+                : 'Un attimo e trovi contenuti e navigazione aggiornati.'
             }
             variant="overlay"
           />
@@ -87,7 +87,7 @@ export function AppShell() {
             </span>
             <span>
               <strong>AdFido v1.0.0</strong>
-              <small>Trova il cane giusto, nel contesto giusto.</small>
+              <small>Annunci, affidi e profili verificati.</small>
             </span>
           </NavLink>
 

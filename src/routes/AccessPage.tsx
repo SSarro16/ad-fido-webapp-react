@@ -29,7 +29,7 @@ const demos = [
   },
   {
     title: 'Canile / Rifugio',
-    description: 'Profilo dedicato ai canili, con possibilita di pubblicare tutti gli annunci necessari.',
+    description: 'Puoi pubblicare e aggiornare tutte le schede necessarie per il rifugio.',
     email: 'shelter.demo@adfido.it',
   },
 ] as const;
@@ -130,8 +130,7 @@ export function AccessPage() {
             <div className="auth-guidance__header">
               <strong>Accessi demo rapidi</strong>
               <p>
-                Seleziona un profilo per compilare automaticamente l email di test, senza esporre
-                password nel client.
+                Seleziona un profilo per compilare automaticamente l email di test.
               </p>
             </div>
             <div className="auth-card-grid auth-card-grid--demo">
