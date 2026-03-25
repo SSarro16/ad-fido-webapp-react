@@ -7,7 +7,6 @@ import { z } from 'zod';
 
 import { useAuthStore } from '../features/auth/auth.store';
 import { useToast } from '../features/toasts/useToast';
-import { env } from '../services/env';
 
 const schema = z.object({
   email: z.string().email(),
@@ -15,24 +14,6 @@ const schema = z.object({
 });
 
 type Values = z.infer<typeof schema>;
-
-const demos = [
-  {
-    title: 'Utente normale',
-    description: 'Puo salvare gli annunci che gli interessano e gestire i preferiti.',
-    email: 'user@adfido.it',
-  },
-  {
-    title: 'Allevatore privato',
-    description: 'Puo creare e modificare annunci, con massimo 3 annunci per account.',
-    email: 'breeder.demo@adfido.it',
-  },
-  {
-    title: 'Canile / Rifugio',
-    description: 'Puoi pubblicare e aggiornare tutte le schede necessarie per il rifugio.',
-    email: 'shelter.demo@adfido.it',
-  },
-] as const;
 
 export function AccessPage() {
   const navigate = useNavigate();
@@ -44,7 +25,6 @@ export function AccessPage() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<Values>({
     resolver: zodResolver(schema),
@@ -124,33 +104,6 @@ export function AccessPage() {
             </Link>
           </div>
         </form>
-
-        {env.enableDemoAuth ? (
-          <div className="panel auth-guidance auth-guidance--demo">
-            <div className="auth-guidance__header">
-              <strong>Accessi demo rapidi</strong>
-              <p>
-                Seleziona un profilo per compilare automaticamente l email di test.
-              </p>
-            </div>
-            <div className="auth-card-grid auth-card-grid--demo">
-              {demos.map(({ title, description, email }) => (
-                <button
-                  key={email}
-                  type="button"
-                  className="panel auth-demo-card"
-                  onClick={() => {
-                    setValue('email', email);
-                  }}
-                >
-                  <strong>{title}</strong>
-                  <span>{description}</span>
-                  <p>{email}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </div>
     </section>
   );

@@ -55,6 +55,13 @@ type FeedbackDraft = {
   createdAt: string;
 };
 
+type ProfessionalTypeCard = {
+  title: string;
+  description: string;
+  imageUrl: string;
+  accent?: boolean;
+};
+
 function getStageCards(items: Article[], activeIndex: number): StageCard[] {
   if (items.length === 0) {
     return [];
@@ -358,8 +365,8 @@ function HomeFooter({
 
             <div className="site-footer__feedback-actions">
               <p>
-                `Salva feedback` lo salva su AdFido e in questo browser. `Invia via email` apre il
-                tuo client di posta verso `simone.sarro@outlook.it`.
+                `Salva feedback` lo salva su AdFido e in questo browser. `Invia via email` apre una
+                bozza gia compilata verso `simone.sarro@outlook.it`.
               </p>
 
               <div className="site-footer__feedback-buttons">
@@ -446,7 +453,21 @@ export function HomePage() {
     },
   ];
 
-  const professionalTypes = ['Allevatore privato', 'Canile / Rifugio'];
+  const professionalTypes: ProfessionalTypeCard[] = [
+    {
+      title: 'Allevatore privato',
+      description: 'Per chi pubblica cucciolate e disponibilita dal proprio allevamento.',
+      imageUrl:
+        'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=1200&q=80',
+    },
+    {
+      title: 'Canile / Rifugio',
+      description: 'Per chi gestisce affidi, canili e rifugi.',
+      imageUrl:
+        'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80',
+      accent: true,
+    },
+  ];
   const professionalBenefits = [
     {
       title: 'Pubblica i tuoi annunci',
@@ -689,18 +710,62 @@ export function HomePage() {
   };
 
   const handleFeedbackMailto = () => {
-    const subject = encodeURIComponent('Feedback sito AdFido beta');
-    const body = encodeURIComponent(
-      [
-        `Nome: ${feedbackForm.name || 'Non specificato'}`,
-        `Email: ${feedbackForm.email || 'Non specificata'}`,
-        '',
-        'Feedback:',
-        feedbackForm.message || '',
-      ].join('\n')
-    );
+    const subjectText = 'Feedback sito AdFido beta';
+    const bodyText = [
+      `Nome: ${feedbackForm.name || 'Non specificato'}`,
+      `Email: ${feedbackForm.email || 'Non specificata'}`,
+      '',
+      'Feedback:',
+      feedbackForm.message || '',
+    ].join('\n');
+    const subject = encodeURIComponent(subjectText);
+    const body = encodeURIComponent(bodyText);
+    const mailtoUrl = `mailto:simone.sarro@outlook.it?subject=${subject}&body=${body}`;
+    const outlookComposeUrl =
+      `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent('simone.sarro@outlook.it')}` +
+      `&subject=${subject}&body=${body}`;
 
-    window.location.href = `mailto:simone.sarro@outlook.it?subject=${subject}&body=${body}`;
+    if (feedbackForm.message.trim().length < 8) {
+      setFeedbackSuccess('');
+      setFeedbackError('Scrivi prima un feedback un po piu chiaro, poi apriamo la mail.');
+      showToast({
+        title: 'Feedback troppo breve',
+        description: 'Aggiungi qualche dettaglio prima di inviarlo via email.',
+        tone: 'warning',
+      });
+      return;
+    }
+
+    const openedWindow = window.open(outlookComposeUrl, '_blank', 'noopener,noreferrer');
+
+    if (openedWindow) {
+      setFeedbackSuccess(
+        'Abbiamo aperto una bozza email precompilata su Outlook. Controlla la nuova scheda e inviala da li.'
+      );
+      showToast({
+        title: 'Bozza email aperta',
+        description: 'Si e aperta una bozza Outlook gia compilata con il tuo feedback.',
+        tone: 'success',
+      });
+      return;
+    }
+
+    const fallbackLink = document.createElement('a');
+    fallbackLink.href = mailtoUrl;
+    fallbackLink.target = '_self';
+    fallbackLink.rel = 'noreferrer';
+    document.body.appendChild(fallbackLink);
+    fallbackLink.click();
+    document.body.removeChild(fallbackLink);
+
+    setFeedbackSuccess(
+      'Abbiamo provato ad aprire il client email del dispositivo con il messaggio gia compilato.'
+    );
+    showToast({
+      title: 'Apertura email avviata',
+      description: 'Se non vedi nulla, controlla se il browser ha un client mail configurato.',
+      tone: 'info',
+    });
   };
 
   if (!data) {
@@ -815,19 +880,18 @@ export function HomePage() {
             </div>
 
             <div className="home-professional__showcase">
-              {professionalTypes.map((item, index) => (
+              {professionalTypes.map((item) => (
                 <article
-                  key={item}
+                  key={item.title}
                   className={`home-professional__type-card${
-                    index === 1 ? ' home-professional__type-card--accent' : ''
+                    item.accent ? ' home-professional__type-card--accent' : ''
                   }`}
+                  style={{ backgroundImage: `url(${item.imageUrl})` }}
                 >
-                  <strong>{item}</strong>
-                  <p>
-                    {index === 0
-                      ? 'Per chi pubblica cucciolate e disponibilita dal proprio allevamento.'
-                      : 'Per chi gestisce affidi, canili e rifugi.'}
-                  </p>
+                  <div className="home-professional__type-card-content">
+                    <strong>{item.title}</strong>
+                    <p>{item.description}</p>
+                  </div>
                 </article>
               ))}
             </div>

@@ -1268,17 +1268,56 @@ img {
 }
 
 .home-professional__type-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   align-content: end;
   min-height: 12.5rem;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)),
     radial-gradient(circle at top right, rgba(255, 255, 255, 0.12), transparent 65%);
+  background-position: center;
+  background-size: cover;
 }
 
 .home-professional__type-card--accent {
   background:
     linear-gradient(180deg, rgba(255, 107, 53, 0.24), rgba(255, 255, 255, 0.06)),
     radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 65%);
+}
+
+.home-professional__type-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: inherit;
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.02);
+}
+
+.home-professional__type-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(7, 21, 33, 0.12) 0%, rgba(7, 21, 33, 0.7) 55%, rgba(7, 21, 33, 0.9) 100%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 40%);
+}
+
+.home-professional__type-card--accent::after {
+  background:
+    linear-gradient(180deg, rgba(32, 18, 9, 0.16) 0%, rgba(32, 18, 9, 0.72) 55%, rgba(32, 18, 9, 0.9) 100%),
+    radial-gradient(circle at top right, rgba(255, 183, 142, 0.18), transparent 40%);
+}
+
+.home-professional__type-card-content {
+  display: grid;
+  gap: 0.45rem;
+  align-content: end;
+  min-height: 100%;
 }
 
 .home-professional__type-card span {
