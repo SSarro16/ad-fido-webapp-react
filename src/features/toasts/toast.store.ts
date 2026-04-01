@@ -19,9 +19,20 @@ type ToastState = {
 
 const toastTimers = new Map<string, number>();
 
-export const useToastStore = create<ToastState>((set) => ({
+export const useToastStore = create<ToastState>((set, get) => ({
   toasts: [],
   pushToast: (toast) => {
+    const duplicate = get().toasts.find(
+      (item) =>
+        item.title === toast.title &&
+        item.description === toast.description &&
+        item.tone === toast.tone
+    );
+
+    if (duplicate) {
+      return duplicate.id;
+    }
+
     const id = crypto.randomUUID();
 
     set((state) => ({

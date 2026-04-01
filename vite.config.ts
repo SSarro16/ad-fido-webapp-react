@@ -32,11 +32,7 @@ export default defineConfig({
             return 'ui-vendor';
           }
 
-          if (id.includes('react')) {
-            return 'react-vendor';
-          }
-
-          return 'vendor';
+          return undefined;
         },
       },
     },

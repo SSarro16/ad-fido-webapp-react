@@ -151,6 +151,82 @@ function createEmptyMetrics() {
   };
 }
 
+function calculateCompletenessScore(listing) {
+  const checks = [
+    Boolean(listing.title?.trim()),
+    Boolean(listing.breed?.trim()),
+    Boolean(listing.city?.trim()),
+    Boolean(listing.region?.trim()),
+    Boolean(listing.ageLabel?.trim()),
+    Boolean(listing.color?.trim()),
+    Boolean(listing.excerpt?.trim()),
+    Boolean(listing.description?.trim()),
+    Array.isArray(listing.images) && listing.images.length > 0,
+    Boolean(listing.coverImage?.trim()),
+    Array.isArray(listing.tags) && listing.tags.length > 0,
+    Array.isArray(listing.traits) && listing.traits.length > 0,
+  ];
+
+  const completedChecks = checks.filter(Boolean).length;
+  return Math.round((completedChecks / checks.length) * 100);
+}
+
+function calculateWaitingDays(listing) {
+  const startedAt = listing.submittedAt ?? listing.updatedAt;
+
+  if (!startedAt) {
+    return 0;
+  }
+
+  const elapsedMs = Date.now() - new Date(startedAt).getTime();
+  return Math.max(0, Math.floor(elapsedMs / (1000 * 60 * 60 * 24)));
+}
+
+function createModerationFlags(listing) {
+  const flags = [];
+
+  if ((listing.images ?? []).length < 3) {
+    flags.push('Gallery essenziale');
+  }
+
+  if ((listing.description ?? '').trim().length < 120) {
+    flags.push('Descrizione breve');
+  }
+
+  if ((listing.tags ?? []).length === 0) {
+    flags.push('Tag mancanti');
+  }
+
+  if ((listing.traits ?? []).length === 0) {
+    flags.push('Tratti non dichiarati');
+  }
+
+  if (listing.status === 'in_review' && calculateWaitingDays(listing) >= 3) {
+    flags.push('Review in attesa da piu giorni');
+  }
+
+  return flags;
+}
+
+function buildAdminHealthSummary(listings) {
+  const inReviewListings = listings.filter((listing) => listing.status === 'in_review');
+  const oldestPendingReviewDays =
+    inReviewListings.length > 0
+      ? Math.max(...inReviewListings.map((listing) => calculateWaitingDays(listing)))
+      : 0;
+  const lowCompletenessListings = listings.filter(
+    (listing) => calculateCompletenessScore(listing) < 65
+  ).length;
+
+  return {
+    ok: oldestPendingReviewDays < 5 && lowCompletenessListings <= Math.max(1, listings.length / 3),
+    mapsConfigured: Boolean(googleMapsApiKey),
+    oldestPendingReviewDays,
+    lowCompletenessListings,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
 async function getAuthenticatedUser(request) {
   const token = readBearerToken(request.headers.authorization);
 
@@ -251,15 +327,19 @@ function sanitizeManagedListing(listing) {
 function buildManagedListingWithOwner(listing, owner) {
   return {
     ...sanitizeManagedListing(listing),
-    owner: owner
+    waitingDays: calculateWaitingDays(listing),
+    completenessScore: calculateCompletenessScore(listing),
+    mediaCount: listing.images?.length ?? 0,
+    moderationFlags: createModerationFlags(listing),
+        owner: owner
       ? {
           id: owner.id,
           name: owner.name,
           email: owner.email,
-          phone: owner.phone,
-          organizationName: owner.organizationName,
+          phone: owner.phone ?? '',
+          organizationName: owner.organizationName ?? '',
           role: owner.role,
-          roleLabel: getRoleLabel(owner.role),
+          accountLabel: getRoleLabel(owner.role),
         }
       : null,
   };
@@ -395,6 +475,7 @@ function calculateAdminOverview(users, listings) {
 
   return {
     generatedAt: new Date().toISOString(),
+    health: buildAdminHealthSummary(listings),
     kpis: {
       totalUsers: userCounts.total,
       professionalAccounts: userCounts.breeder + userCounts.shelter,
@@ -438,6 +519,7 @@ app.get('/api/health', (_request, response) => {
   response.json({
     ok: true,
     mapsConfigured: Boolean(googleMapsApiKey),
+    storageConfigured: true,
   });
 });
 

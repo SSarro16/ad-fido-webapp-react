@@ -1,4 +1,5 @@
-import { MessageSquareMore, Mail, Inbox } from 'lucide-react';
+import { ArrowRight, Mail, Inbox, MessageSquareMore, Siren } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { useAuthStore } from '../features/auth/auth.store';
 import { useAdminFeedback } from '../features/feedback/feedback.queries';
@@ -8,7 +9,7 @@ import { SectionTitle } from '../ui/SectionTitle';
 export function AdminFeedbackPage() {
   const session = useAuthStore((state) => state.session);
   const token = session?.token;
-  const { data: feedback = [], isLoading } = useAdminFeedback(token);
+  const { data: feedback = [], isLoading, isError, error } = useAdminFeedback(token);
 
   return (
     <section className="section section--page">
@@ -20,6 +21,19 @@ export function AdminFeedbackPage() {
           className="section-title--wide"
         />
 
+        <article className="panel admin-toolbar">
+          <div className="profile-quick-actions">
+            <Link className="button button--secondary" to="/admin">
+              Torna alla control room
+              <ArrowRight size={18} />
+            </Link>
+            <Link className="button button--ghost" to="/admin/inventory">
+              Apri inventory admin
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+        </article>
+
         {isLoading ? (
           <DogLoadingScreen
             title="Stiamo recuperando i feedback"
@@ -28,7 +42,15 @@ export function AdminFeedbackPage() {
           />
         ) : null}
 
-        <div className="account-grid seller-stats">
+        {isError ? (
+          <article className="panel empty-state">
+            <Siren size={22} />
+            <strong>Feedback admin non disponibile</strong>
+            <p>{error instanceof Error ? error.message : 'Non siamo riusciti a caricare i feedback.'}</p>
+          </article>
+        ) : null}
+
+        {!isError ? <div className="account-grid seller-stats">
           <article className="panel account-card seller-stat-card">
             <Inbox size={22} />
             <div>
@@ -45,9 +67,9 @@ export function AdminFeedbackPage() {
               <small>Canale diretto usato dal pulsante email del footer</small>
             </div>
           </article>
-        </div>
+        </div> : null}
 
-        <div className="results-list results-list--cards admin-feedback-list">
+        {!isError ? <div className="results-list results-list--cards admin-feedback-list">
           {feedback.length === 0 ? (
             <article className="panel empty-state">
               <MessageSquareMore size={22} />
@@ -81,7 +103,7 @@ export function AdminFeedbackPage() {
               </article>
             ))
           )}
-        </div>
+        </div> : null}
       </div>
     </section>
   );

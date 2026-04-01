@@ -638,7 +638,12 @@ function ListingComposerCard({
 export function ProfessionalDashboardPage() {
   const session = useAuthStore((state) => state.session);
   const token = session?.token;
-  const { data: listings = [], isLoading: isListingsLoading } = useManagedListings(token);
+  const {
+    data: listings = [],
+    isLoading: isListingsLoading,
+    isError: isListingsError,
+    error: listingsError,
+  } = useManagedListings(token);
   const createListing = useCreateManagedListing(token);
   const updateListing = useUpdateManagedListing(token);
   const updateStatus = useUpdateManagedListingStatus(token);
@@ -905,191 +910,208 @@ export function ProfessionalDashboardPage() {
           className="section-title--wide"
         />
 
-        <div className={`seller-headline seller-headline--${sellerMode}`}>
-          <article className="panel seller-headline__hero">
-            <div className="seller-headline__copy">
-              <span className="seller-headline__eyebrow">{dashboardCopy.eyebrow}</span>
-              <h2>{dashboardCopy.leadTitle}</h2>
-              <p>{dashboardCopy.leadBody}</p>
-            </div>
-
-            <div className="seller-headline__meta">
-              <div className="seller-headline__meta-card">
-                <strong>
-                  {isBreeder ? `${breederSlotsUsed}/${breederListingLimit}` : listings.length}
-                </strong>
-                <span>{isBreeder ? 'slot usati' : 'schede totali'}</span>
-              </div>
-              <div className="seller-headline__meta-card">
-                <strong>{listings.filter((item) => item.status === 'in_review').length}</strong>
-                <span>in revisione</span>
-              </div>
-            </div>
+        {isListingsError ? (
+          <article className="panel empty-state">
+            <strong>Dashboard non disponibile</strong>
+            <p>
+              {listingsError instanceof Error
+                ? listingsError.message
+                : 'Non siamo riusciti a recuperare le tue schede.'}
+            </p>
           </article>
+        ) : null}
 
-          <article className="panel seller-workflow">
-            <div className="seller-workflow__header">
-              <span className="seller-headline__eyebrow">Workflow</span>
-              <h3>{dashboardCopy.workflowTitle}</h3>
-            </div>
-            <div className="seller-workflow__list">
-              {dashboardCopy.workflowItems.map(([title, body]) => (
-                <div key={title}>
-                  <strong>{title}</strong>
-                  <p>{body}</p>
+        {!isListingsError ? (
+          <>
+            <div className={`seller-headline seller-headline--${sellerMode}`}>
+              <article className="panel seller-headline__hero">
+                <div className="seller-headline__copy">
+                  <span className="seller-headline__eyebrow">{dashboardCopy.eyebrow}</span>
+                  <h2>{dashboardCopy.leadTitle}</h2>
+                  <p>{dashboardCopy.leadBody}</p>
                 </div>
-              ))}
-            </div>
-            <Link className="button button--ghost" to="/account">
-              Vai all&apos;area personale
-              <ArrowRight size={18} />
-            </Link>
-          </article>
-        </div>
 
-        <div className="account-grid seller-stats">
-          {sellerStats.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <article key={item.label} className="panel account-card seller-stat-card">
-                <Icon size={22} />
-                <div>
-                  <strong>{item.value}</strong>
-                  <p>{item.label}</p>
-                  <small>{item.note}</small>
+                <div className="seller-headline__meta">
+                  <div className="seller-headline__meta-card">
+                    <strong>
+                      {isBreeder ? `${breederSlotsUsed}/${breederListingLimit}` : listings.length}
+                    </strong>
+                    <span>{isBreeder ? 'slot usati' : 'schede totali'}</span>
+                  </div>
+                  <div className="seller-headline__meta-card">
+                    <strong>{listings.filter((item) => item.status === 'in_review').length}</strong>
+                    <span>in revisione</span>
+                  </div>
                 </div>
               </article>
-            );
-          })}
-        </div>
 
-        {isBreeder ? (
-          <div
-            className={`seller-limit-banner${breederLimitReached ? ' seller-limit-banner--warning' : ''}`}
-          >
-            <strong>Quota account allevatore privato</strong>
-            <p>
-              {breederLimitReached
-                ? 'Hai raggiunto il limite massimo di 3 annunci. Elimina o riutilizza una scheda esistente prima di crearne un altra.'
-                : `Hai ancora ${breederSlotsLeft} slot disponibili sui 3 massimi previsti per questo account.`}
-            </p>
-          </div>
-        ) : (
-          <div className="seller-limit-banner seller-limit-banner--shelter">
-            <strong>Gestione canile / rifugio</strong>
-            <p>
-              Il profilo canile puo pubblicare tutte le schede necessarie e aggiornarle in base alle esigenze del rifugio.
-            </p>
-          </div>
-        )}
+              <article className="panel seller-workflow">
+                <div className="seller-workflow__header">
+                  <span className="seller-headline__eyebrow">Workflow</span>
+                  <h3>{dashboardCopy.workflowTitle}</h3>
+                </div>
+                <div className="seller-workflow__list">
+                  {dashboardCopy.workflowItems.map(([title, body]) => (
+                    <div key={title}>
+                      <strong>{title}</strong>
+                      <p>{body}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link className="button button--ghost" to="/account">
+                  Vai all&apos;area personale
+                  <ArrowRight size={18} />
+                </Link>
+              </article>
+            </div>
 
-        <div
-          className={`seller-dashboard-shell${showDashboardLoader ? ' seller-dashboard-shell--muted' : ''}`}
-        >
-          <aside className="panel seller-dashboard-sidebar">
-            <div className="seller-dashboard-sidebar__header">
-              <div>
-                <span className="seller-dashboard-sidebar__eyebrow">Libreria schede</span>
-                <h3>{dashboardCopy.listTitle}</h3>
-                <p>{dashboardCopy.createDescription}</p>
-              </div>
-              <button
-                type="button"
-                className="button button--primary"
-                disabled={isBusy}
-                onClick={openNewCard}
+            <div className="account-grid seller-stats">
+              {sellerStats.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <article key={item.label} className="panel account-card seller-stat-card">
+                    <Icon size={22} />
+                    <div>
+                      <strong>{item.value}</strong>
+                      <p>{item.label}</p>
+                      <small>{item.note}</small>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {isBreeder ? (
+              <div
+                className={`seller-limit-banner${breederLimitReached ? ' seller-limit-banner--warning' : ''}`}
               >
-                <Plus size={18} />
-                {dashboardCopy.createLabel}
-              </button>
-            </div>
+                <strong>Quota account allevatore privato</strong>
+                <p>
+                  {breederLimitReached
+                    ? 'Hai raggiunto il limite massimo di 3 annunci. Elimina o riutilizza una scheda esistente prima di crearne un altra.'
+                    : `Hai ancora ${breederSlotsLeft} slot disponibili sui 3 massimi previsti per questo account.`}
+                </p>
+              </div>
+            ) : (
+              <div className="seller-limit-banner seller-limit-banner--shelter">
+                <strong>Gestione canile / rifugio</strong>
+                <p>
+                  Il profilo canile puo pubblicare tutte le schede necessarie e aggiornarle in base alle esigenze del rifugio.
+                </p>
+              </div>
+            )}
 
-            <div className="managed-list">
-              {listings.map((listing) => (
-                <article
-                  key={listing.id}
-                  className={`managed-card${openListingIds.includes(listing.id) ? ' managed-card--active' : ''}`}
-                >
+            <div
+              className={`seller-dashboard-shell${showDashboardLoader ? ' seller-dashboard-shell--muted' : ''}`}
+            >
+              <aside className="panel seller-dashboard-sidebar">
+                <div className="seller-dashboard-sidebar__header">
                   <div>
-                    <strong>{listing.title}</strong>
-                    <p>
-                      {listing.breed} · {listing.city}
-                    </p>
+                    <span className="seller-dashboard-sidebar__eyebrow">Libreria schede</span>
+                    <h3>{dashboardCopy.listTitle}</h3>
+                    <p>{dashboardCopy.createDescription}</p>
                   </div>
-                  <div className="chip-row">
-                    <span className="chip">{statusLabels[listing.status]}</span>
-                    <span className="chip">{listing.images.length} immagini</span>
-                  </div>
-                  <div className="managed-card__actions">
-                    <button
-                      type="button"
-                      className="button button--ghost"
-                      disabled={isBusy}
-                      onClick={() => openListingCard(listing.id)}
-                    >
-                      <PencilLine size={16} />
-                      Apri card
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </aside>
-
-          <div className="seller-dashboard-main seller-dashboard-main--stacked">
-            {draftCards.map((draft) => (
-              <ListingComposerCard
-                key={draft.id}
-                composerId={draft.id}
-                title={dashboardCopy.createCardTitle}
-                subtitle={dashboardCopy.createCardSubtitle}
-                token={token}
-                sellerMode={sellerMode}
-                isBusy={isBusy}
-                onClose={() =>
-                  setDraftCards((current) => current.filter((item) => item.id !== draft.id))
-                }
-                onCreate={handleCreate}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                onRestoreDraft={handleRestoreDraft}
-              />
-            ))}
-
-            {openListings.map((listing) => (
-              <ListingComposerCard
-                key={listing.id}
-                composerId={listing.id}
-                title={
-                  sellerMode === 'breeder' ? 'Modifica annuncio privato' : 'Modifica scheda affido'
-                }
-                subtitle="Questa card resta indipendente dalle altre schede aperte, cosi puoi lavorare senza conflitti di stato."
-                token={token}
-                sellerMode={sellerMode}
-                isBusy={isBusy}
-                initialListing={listing}
-                onClose={() => closeListingCard(listing.id)}
-                onCreate={handleCreate}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                onRestoreDraft={handleRestoreDraft}
-              />
-            ))}
-
-            {draftCards.length === 0 && openListings.length === 0 ? (
-              <article className="panel seller-composer seller-composer--empty">
-                <div className="seller-composer__header">
-                  <div>
-                    <span className="seller-dashboard-sidebar__eyebrow">Editor scheda</span>
-                    <h3>Nessuna card aperta</h3>
-                    <p>Apri una scheda esistente oppure crea un nuovo annuncio per iniziare.</p>
-                  </div>
+                  <button
+                    type="button"
+                    className="button button--primary"
+                    disabled={isBusy}
+                    onClick={openNewCard}
+                  >
+                    <Plus size={18} />
+                    {dashboardCopy.createLabel}
+                  </button>
                 </div>
-              </article>
-            ) : null}
-          </div>
-        </div>
+
+                <div className="managed-list">
+                  {listings.map((listing) => (
+                    <article
+                      key={listing.id}
+                      className={`managed-card${openListingIds.includes(listing.id) ? ' managed-card--active' : ''}`}
+                    >
+                      <div>
+                        <strong>{listing.title}</strong>
+                        <p>
+                          {listing.breed} · {listing.city}
+                        </p>
+                      </div>
+                      <div className="chip-row">
+                        <span className="chip">{statusLabels[listing.status]}</span>
+                        <span className="chip">{listing.images.length} immagini</span>
+                      </div>
+                      <div className="managed-card__actions">
+                        <button
+                          type="button"
+                          className="button button--ghost"
+                          disabled={isBusy}
+                          onClick={() => openListingCard(listing.id)}
+                        >
+                          <PencilLine size={16} />
+                          Apri card
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </aside>
+
+              <div className="seller-dashboard-main seller-dashboard-main--stacked">
+                {draftCards.map((draft) => (
+                  <ListingComposerCard
+                    key={draft.id}
+                    composerId={draft.id}
+                    title={dashboardCopy.createCardTitle}
+                    subtitle={dashboardCopy.createCardSubtitle}
+                    token={token}
+                    sellerMode={sellerMode}
+                    isBusy={isBusy}
+                    onClose={() =>
+                      setDraftCards((current) => current.filter((item) => item.id !== draft.id))
+                    }
+                    onCreate={handleCreate}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                    onRestoreDraft={handleRestoreDraft}
+                  />
+                ))}
+
+                {openListings.map((listing) => (
+                  <ListingComposerCard
+                    key={listing.id}
+                    composerId={listing.id}
+                    title={
+                      sellerMode === 'breeder'
+                        ? 'Modifica annuncio privato'
+                        : 'Modifica scheda affido'
+                    }
+                    subtitle="Questa card resta indipendente dalle altre schede aperte, cosi puoi lavorare senza conflitti di stato."
+                    token={token}
+                    sellerMode={sellerMode}
+                    isBusy={isBusy}
+                    initialListing={listing}
+                    onClose={() => closeListingCard(listing.id)}
+                    onCreate={handleCreate}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                    onRestoreDraft={handleRestoreDraft}
+                  />
+                ))}
+
+                {draftCards.length === 0 && openListings.length === 0 ? (
+                  <article className="panel seller-composer seller-composer--empty">
+                    <div className="seller-composer__header">
+                      <div>
+                        <span className="seller-dashboard-sidebar__eyebrow">Editor scheda</span>
+                        <h3>Nessuna card aperta</h3>
+                        <p>Apri una scheda esistente oppure crea un nuovo annuncio per iniziare.</p>
+                      </div>
+                    </div>
+                  </article>
+                ) : null}
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </section>
   );

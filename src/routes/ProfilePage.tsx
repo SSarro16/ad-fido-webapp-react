@@ -37,7 +37,11 @@ export function ProfilePage() {
     null
   );
   const dashboardHref =
-    session?.user.role === 'breeder' || session?.user.role === 'shelter' ? '/subscriber' : null;
+    session?.user.role === 'admin'
+      ? '/admin'
+      : session?.user.role === 'breeder' || session?.user.role === 'shelter'
+        ? '/subscriber'
+        : null;
   const accountLabel =
     session?.user.role === 'shelter' || session?.user.accountType === 'shelter_refuge'
       ? 'Canile / Rifugio'
@@ -126,12 +130,19 @@ export function ProfilePage() {
       [
         session?.user.role === 'admin'
           ? {
-              label: 'Apri feedback sito',
-              href: '/admin/feedback',
+              label: 'Apri control room',
+              href: '/admin',
               tone: 'secondary' as const,
             }
           : null,
-        dashboardHref
+        session?.user.role === 'admin'
+          ? {
+              label: 'Apri feedback sito',
+              href: '/admin/feedback',
+              tone: 'ghost' as const,
+            }
+          : null,
+        dashboardHref && session?.user.role !== 'admin'
           ? {
               label: 'Apri dashboard',
               href: dashboardHref,
@@ -158,13 +169,14 @@ export function ProfilePage() {
     resolver: zodResolver(schema),
     defaultValues,
   });
+  const isAdminProfile = session?.user.role === 'admin';
 
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
   return (
-    <section className="section section--page">
+    <section className={`section section--page${isAdminProfile ? ' profile-page--admin' : ''}`}>
       <div className="container">
         <SectionTitle
           eyebrow="Area personale"
@@ -188,8 +200,8 @@ export function ProfilePage() {
               Qui puoi aggiornare i dati del tuo account e controllare i collegamenti principali.
             </p>
             <div className="chip-row">
-              <span className="chip">{accountLabel}</span>
-              {session?.user.emailVerified ? <span className="chip">Email verificata</span> : null}
+              <span className={`chip ${isAdminProfile ? 'chip--role' : ''}`}>{accountLabel}</span>
+              {session?.user.emailVerified ? <span className="chip chip--metric">Email verificata</span> : null}
             </div>
             <div className="profile-quick-actions">
               {quickActions.map((action) => (
@@ -250,11 +262,11 @@ export function ProfilePage() {
               </div>
             </div>
             <div className="chip-row">
-              <span className="chip">{accountLabel}</span>
+              <span className={`chip ${isAdminProfile ? 'chip--role' : ''}`}>{accountLabel}</span>
               {session?.user.accountType ? (
-                <span className="chip">{session.user.accountType}</span>
+                <span className="chip chip--metric">{session.user.accountType}</span>
               ) : null}
-              <span className="chip">{session?.user.email}</span>
+              <span className="chip chip--metric">{session?.user.email}</span>
             </div>
             <div className="dashboard-bridge__list">
               <div>
@@ -281,7 +293,7 @@ export function ProfilePage() {
               </div>
             </div>
             <form
-              className="editor-form"
+              className={`editor-form${isAdminProfile ? ' editor-form--admin' : ''}`}
               onSubmit={handleSubmit(async (values) => {
                 try {
                   setFeedback(null);

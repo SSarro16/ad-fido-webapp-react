@@ -1,19 +1,16 @@
 ﻿import {
   ArrowLeft,
   ArrowRight,
-  Building2,
   Clock3,
-  Dog,
   MapPin,
   PlayCircle,
   Send,
-  ShieldCheck,
   Sparkles,
-  Users,
 } from 'lucide-react';
 import { type FormEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import adfidoLogoTemporary from '../../assets/adfido-logo-temp.jpeg';
 import { articleItems } from '../features/articles/articles.data';
 import { useHomePayload } from '../features/marketplace/marketplace.queries';
 import { useToast } from '../features/toasts/useToast';
@@ -263,7 +260,12 @@ function HomeFooter({
       <div className="container site-footer__shell">
         <div className="site-footer__hero">
           <div className="site-footer__brand">
-            <span className="site-footer__eyebrow">AdFido v1.0.0</span>
+            <img
+              src={adfidoLogoTemporary}
+              alt="Logo temporaneo AdFido"
+              className="site-footer__brand-logo"
+            />
+            <span className="site-footer__eyebrow">AdFido v2.0.0</span>
             <strong>AdFido raccoglie annunci, articoli e contatti utili in un unico punto.</strong>
             <p>
               In fondo alla homepage trovi i collegamenti principali e uno spazio per lasciare un
@@ -406,43 +408,6 @@ export function HomePage() {
   const [feedbackError, setFeedbackError] = useState('');
   const [feedbackSuccess, setFeedbackSuccess] = useState('');
   const [isSavingFeedback, setIsSavingFeedback] = useState(false);
-
-  const pathways = [
-    {
-      icon: Dog,
-      title: 'Cerca per tipo di cane',
-      description:
-        'Parti da razza, taglia, eta o carattere e scorri gli annunci in modo piu rapido.',
-    },
-    {
-      icon: Building2,
-      title: 'Esplora canili e strutture',
-      description: 'Controlla chi pubblica, dove si trova e se il profilo e verificato.',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Valuta con piu fiducia',
-      description: 'Mappe, recensioni e dettagli utili ti aiutano a valutare meglio ogni annuncio.',
-    },
-  ];
-
-  const trustBlocks = [
-    {
-      icon: Sparkles,
-      title: 'Schede piu leggibili',
-      description: 'Ogni annuncio mostra prima le informazioni principali, senza passaggi inutili.',
-    },
-    {
-      icon: MapPin,
-      title: 'Contesto reale',
-      description: 'Per i canili verificati mostriamo posizione, recensioni e riferimenti utili.',
-    },
-    {
-      icon: Users,
-      title: 'Percorsi separati',
-      description: 'Utenti, allevatori e canili hanno aree dedicate in base a quello che devono fare.',
-    },
-  ];
 
   const professionalTypes: ProfessionalTypeCard[] = [
     {
@@ -713,58 +678,54 @@ export function HomePage() {
     return null;
   }
 
-  return (
-    <>
-      <SearchHero stats={data.stats} frequentSearches={data.frequentSearches} />
+    return (
+    <div className="home-page">
+      <SearchHero />
 
       <section className="section section--tight section--after-hero">
-        <div className="container home-chooser">
-          <Reveal className="home-chooser__lead" y={18}>
-            <span className="home-chooser__eyebrow">Percorsi principali</span>
-            <h2>Una homepage che ti aiuta a capire subito dove andare.</h2>
-            <p>
-              Parti dalla ricerca, controlla chi pubblica e apri le schede che ti interessano.
-            </p>
-          </Reveal>
+        <div className="container">
+          <Reveal className="home-data-feature" y={18}>
+            <div className="home-data-feature__intro">
+              <span className="home-data-feature__eyebrow">AdFido</span>
+              <p className="home-data-feature__lead">
+                In AdFido pensiamo che tutti i cani meritano una famiglia amorevole, da qui nasce
+                il progetto di offrire visibilità online a tutti i pelosetti in cerca di una casa
+                accogliente e piena d’amore.
+              </p>
 
-          <StaggerGrid className="home-chooser__grid" delay={0.05}>
-            {pathways.map((item) => {
-              const Icon = item.icon;
-              return (
-                <StaggerItem key={item.title}>
-                  <article className="highlight-card home-chooser__card">
-                    <div className="home-chooser__icon">
-                      <Icon size={20} />
-                    </div>
-                    <strong>{item.title}</strong>
-                    <p>{item.description}</p>
-                  </article>
-                </StaggerItem>
-              );
-            })}
-          </StaggerGrid>
-        </div>
-      </section>
+              <div className="home-data-feature__copy">
+                <p>
+                  AdFido non favorisce in alcun modo il commercio di esseri viventi, ed è per
+                  questo motivo che il nostro servizio è gratuito per tutti gli enti, associazioni
+                  benefiche e canili idonei che ne fanno richiesta tramite apposito form.
+                </p>
+                <p>
+                  È però un dato di fatto che esistano organizzazioni che affidano pet su compenso
+                  e proprio perché “tutti i cani meritano una famiglia amorevole” la piattaforma è
+                  aperta a tutti a varie e appropriate condizioni.
+                </p>
+                <p>
+                  Inoltre ci impegniamo a diffondere conoscenza e consapevolezza per prevenire
+                  l’abbandono e favorire il benessere di animali e famiglie.
+                </p>
+              </div>
 
-      <section className="section section--soft">
-        <div className="container home-trustband">
-          <div className="home-trustband__copy">
-            <span className="home-trustband__eyebrow">Perche AdFido</span>
-            <h2>Uno spazio piu semplice per cercare, confrontare e contattare.</h2>
-          </div>
+              <div className="home-data-feature__warning">
+                <strong>USATECI CON COSCIENZA E BUONE INTENZIONI.</strong>
+                <span>Diffidate da potenziali truffe e frodi.</span>
+              </div>
+            </div>
 
-          <div className="home-trustband__grid">
-            {trustBlocks.map((item) => {
-              const Icon = item.icon;
-              return (
-                <article key={item.title} className="panel home-trustband__card">
-                  <Icon size={20} />
-                  <strong>{item.title}</strong>
-                  <p>{item.description}</p>
+            <div className="home-data-feature__grid">
+              {data.stats.map((stat) => (
+                <article key={stat.label} className="home-data-feature__card">
+                  <span className="home-data-feature__label">{stat.label}</span>
+                  <strong>{stat.value}</strong>
+                  {stat.note ? <p>{stat.note}</p> : null}
                 </article>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -1066,6 +1027,6 @@ export function HomePage() {
         }}
         onFeedbackSubmit={handleFeedbackSubmit}
       />
-    </>
+    </div>
   );
 }

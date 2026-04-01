@@ -10,6 +10,9 @@ type LocationAutocompleteInputProps = {
   placeholder?: string;
   label?: string;
   name?: string;
+  wrapperClassName?: string;
+  labelClassName?: string;
+  showIcon?: boolean;
 };
 
 export function LocationAutocompleteInput({
@@ -18,6 +21,9 @@ export function LocationAutocompleteInput({
   placeholder = 'Citta, regione o provincia',
   label,
   name,
+  wrapperClassName,
+  labelClassName,
+  showIcon = true,
 }: LocationAutocompleteInputProps) {
   const listboxId = useId();
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
@@ -69,14 +75,18 @@ export function LocationAutocompleteInput({
   }, [value]);
 
   return (
-    <label className="location-input">
-      {label ? <span>{label}</span> : null}
+    <label className={wrapperClassName ? `location-input ${wrapperClassName}` : 'location-input'}>
+      {label ? <span className={labelClassName}>{label}</span> : null}
 
       <div className="location-input__wrap">
-        <div className="location-input__control">
-          <span className="location-input__icon" aria-hidden="true">
-            <MapPin size={18} />
-          </span>
+        <div
+          className={`location-input__control${showIcon ? '' : ' location-input__control--no-icon'}`}
+        >
+          {showIcon ? (
+            <span className="location-input__icon" aria-hidden="true">
+              <MapPin size={18} />
+            </span>
+          ) : null}
           <input
             className="location-input__field"
             name={name}

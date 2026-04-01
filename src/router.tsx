@@ -33,6 +33,16 @@ const ProfessionalDashboardPage = lazy(() =>
     default: module.ProfessionalDashboardPage,
   }))
 );
+const AdminControlRoomPage = lazy(() =>
+  import('./routes/AdminControlRoomPage').then((module) => ({
+    default: module.AdminControlRoomPage,
+  }))
+);
+const AdminInventoryPage = lazy(() =>
+  import('./routes/AdminInventoryPage').then((module) => ({
+    default: module.AdminInventoryPage,
+  }))
+);
 const AdminFeedbackPage = lazy(() =>
   import('./routes/AdminFeedbackPage').then((module) => ({
     default: module.AdminFeedbackPage,
@@ -76,6 +86,22 @@ export const router = createBrowserRouter([
         element: withFallback(
           <RequireRole allowedRoles={['subscriber', 'breeder', 'shelter']}>
             <ProfessionalDashboardPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'admin',
+        element: withFallback(
+          <RequireRole allowedRoles={['admin']}>
+            <AdminControlRoomPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'admin/inventory',
+        element: withFallback(
+          <RequireRole allowedRoles={['admin']}>
+            <AdminInventoryPage />
           </RequireRole>
         ),
       },

@@ -43,7 +43,9 @@ export function AccessPage() {
       });
       const session = useAuthStore.getState().session;
       navigate(
-        session?.user.role === 'breeder' || session?.user.role === 'shelter'
+        session?.user.role === 'admin'
+          ? '/admin'
+          : session?.user.role === 'breeder' || session?.user.role === 'shelter'
           ? '/subscriber'
           : (state?.from ?? '/account')
       );

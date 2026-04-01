@@ -42,4 +42,20 @@ describe('toast.store', () => {
 
     expect(useToastStore.getState().toasts).toHaveLength(0);
   });
+
+  it('does not enqueue duplicate toasts while one with the same content is already visible', () => {
+    useToastStore.getState().pushToast({
+      title: 'Salvato',
+      description: 'Operazione completata.',
+      tone: 'success',
+    });
+
+    useToastStore.getState().pushToast({
+      title: 'Salvato',
+      description: 'Operazione completata.',
+      tone: 'success',
+    });
+
+    expect(useToastStore.getState().toasts).toHaveLength(1);
+  });
 });

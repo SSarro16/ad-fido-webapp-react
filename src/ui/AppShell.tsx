@@ -1,5 +1,6 @@
 import {
   BookOpenText,
+  BriefcaseBusiness,
   Heart,
   LayoutDashboard,
   LayoutGrid,
@@ -26,22 +27,25 @@ export function AppShell() {
   const showGlobalLoader =
     navigationState.state !== 'idle' || !initialized || authStatus === 'loading';
   const canManageListings = session?.user.role === 'breeder' || session?.user.role === 'shelter';
+  const isAdmin = session?.user.role === 'admin';
   const navigation = [
     { to: '/', label: 'Home', icon: LayoutGrid },
     { to: '/listings', label: 'Annunci', icon: Search },
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
-    ...(session ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
+    ...(session && !isAdmin ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
   ];
-  const dashboardHref = '/subscriber';
-  const dashboardLabel = 'Dashboard professionale';
+  const dashboardHref = isAdmin ? '/admin' : '/subscriber';
+  const dashboardLabel = isAdmin ? 'Control room admin' : 'Dashboard professionale';
   const mobileNavigation = [
     { to: '/', label: 'Home', icon: LayoutGrid },
     { to: '/listings', label: 'Annunci', icon: Search },
     { to: '/articles', label: 'Articoli', icon: BookOpenText },
-    ...(session && canManageListings
+    ...(session && (canManageListings || isAdmin)
       ? [{ to: dashboardHref, label: 'Dashboard', icon: LayoutDashboard }]
       : []),
-    ...(session && !canManageListings ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }] : []),
+    ...(session && !canManageListings && !isAdmin
+      ? [{ to: '/favorites', label: 'Preferiti', icon: Heart }]
+      : []),
     ...(session ? [{ to: '/account', label: 'Profilo', icon: UserCircle2 }] : []),
     ...(session ? [{ action: 'logout' as const, label: 'Logout', icon: LogOut }] : []),
   ];
@@ -86,7 +90,7 @@ export function AppShell() {
               <PawPrint size={18} strokeWidth={2.2} />
             </span>
             <span>
-              <strong>AdFido v1.0.0</strong>
+              <strong>AdFido v2.0.0</strong>
               <small>Annunci, affidi e profili verificati.</small>
             </span>
           </NavLink>
@@ -109,9 +113,9 @@ export function AppShell() {
 
           {session ? (
             <div className="topbar__actions topbar__actions--signed">
-              {canManageListings ? (
+              {canManageListings || isAdmin ? (
                 <NavLink className="topbar__utility-link" to={dashboardHref}>
-                  <LayoutDashboard size={16} />
+                  {isAdmin ? <BriefcaseBusiness size={16} /> : <LayoutDashboard size={16} />}
                   <span>{dashboardLabel}</span>
                 </NavLink>
               ) : null}
